@@ -1,1 +1,12 @@
-{"message":"Not Found","documentation_url":"https://docs.github.com/rest","status":"404"}
+{
+	"meta": {
+		"createdAt": "2025-08-20",
+		"destinated-oss": {
+			"owner": "ryoppippi",
+			"Repository": "ccusage"
+		}
+	},
+	"data": {
+		"libraries": ["a", "b", "c", "d"]
+	}
+}

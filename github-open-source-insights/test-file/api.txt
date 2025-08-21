@@ -1,0 +1,8 @@
+# 1. 指定GitHubリポジトリに紐づくパッケージ版一覧
+curl 'https://api.deps.dev/v3/projects/github.com%2Ffacebook%2Freact:packageversions'
+
+# 2. 依存グラフ（例: npm の react 18.2.0）
+curl 'https://api.deps.dev/v3/systems/NPM/packages/react/versions/18.2.0:dependencies'
+
+# 3. 依存ライブラリごとに、ホスティングサービスのowner/repoを取得
+curl 'https://api.deps.dev/v3/systems/NPM/packages/scheduler/versions/0.23.0'

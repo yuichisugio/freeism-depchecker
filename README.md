@@ -8,34 +8,38 @@
 
 - 依存関係を出力するロジック別でフォルダ分けをしている
 - 各ロジック直下に、以下がある
-	1. 実行する`main.sh`
-	1. 出力結果が入る`results`フォルダ
-	1. 各ロジックごとの説明が記載されている`document.md`
+  1.  実行する`main.sh`
+  1.  出力結果が入る`results`フォルダ
+  1.  各ロジックごとの説明が記載されている`document.md`
 
 ## 種類
 
-1. GitHub API から、GitHub CLI を使用して、指定ライブラリの SBOM を取得する方法
+1. 「GitHub API」と「Google Open Source Insights」を組み合わせる方法
+
    - <a href="https://docs.github.com/ja/rest/dependency-graph/sboms" target="_blank" rel="noopener noreferrer">https://docs.github.com/ja/rest/dependency-graph/sboms</a>
-1. Google Open Source Insights からデータを取得する方法
-   - <a href="https://deps.dev/" target="_blank" rel="noopener noreferrer">https://deps.dev/</a>
+   - <a href="https://github.com/google/deps.dev?tab=readme-ov-file#data" target="_blank" rel="noopener noreferrer">https://github.com/google/deps.dev?tab=readme-ov-file#data</a>
+
+1. 「libraries.io」を使用する方法
+   - <a href="https://libraries.io/api" target="_blank" rel="noopener noreferrer">https://libraries.io/api</a>
 
 ## 出力形式
-- 2つのファイル形式で出力する
 
-1. rawデータ
-	- 返されたデータをそのまま記載
+- 2 つのファイル形式で出力する
+
+1. raw データ
+   - 返されたデータをそのまま記載
 2. 以下の形式
-	```json
-	{
-		"meta": {
-			"createdAt": "2025-08-20",
-			"destinated-oss": {
-				"owner": "ryoppippi",
-				"Repository": "ccusage"
-			}
-		},
-		"data": {
-			"libraries": ["a", "b", "c", "d"]
-		}
-	}
-	```
+   ```json
+   {
+   	"meta": {
+   		"createdAt": "2025-08-20",
+   		"destinated-oss": {
+   			"owner": "ryoppippi",
+   			"Repository": "ccusage"
+   		}
+   	},
+   	"data": {
+   		"libraries": ["a", "b", "c", "d"]
+   	}
+   }
+   ```

@@ -97,13 +97,11 @@ setup_output_directory() {
   return 0
 }
 
-
 ########################################
 # データ取得
 ########################################
 get_dependencies_raw() {
   # 指定リポジトリの依存関係（libraries.io）を取得
-  echo "Libraries.io から依存関係を取得: ${SERVICE}/${OWNER}/${REPO}"
   local url
   url="https://libraries.io/api/${SERVICE}/${OWNER}/${REPO}/dependencies"
   local raw_file
@@ -112,9 +110,8 @@ get_dependencies_raw() {
   curl -sS "$url" | tee "$raw_file"
 }
 
-
 ########################################
-# 加工・保存
+# 加工
 ########################################
 process_raw_data() {
   # $1: 依存関係の raw JSON
@@ -164,7 +161,7 @@ process_raw_data() {
         "destinated-oss": { owner: $owner, Repository: $repo }
       },
       data: {
-        libraries: [ $libs ]
+        libraries:  $libs
       }
     }')
 
@@ -173,7 +170,9 @@ process_raw_data() {
   return 0
 }
 
-# 出力を保存
+########################################
+# 保存
+########################################
 save_output() {
   # $1: 出力 JSON
   local json="$1"
@@ -184,13 +183,20 @@ save_output() {
 
 # 実行の流れを定義
 main() {
+  # 出力ディレクトリの作成
   setup_output_directory
+
   # 1) 依存関係の raw を取得
+  local raw_data
   raw_data=$(get_dependencies_raw)
+
   # 2) README 形式に整形
+  local output_json
   output_json=$(process_raw_data "$raw_data")
+
   # 3) 保存
   save_output "$output_json"
+
   return 0
 }
 

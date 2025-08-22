@@ -40,10 +40,9 @@
    	},
    	"data": {
    		"libraries": [
-   			[
-   				{ "host": "github.com", "owner": "acme", "repo": "lib-a" },
-   				{ "host": "gitlab.com", "owner": "group", "repo": "lib-b" }
-   			]
+   			{ "host": "github.com", "owner": "acme", "repo": "lib-a" },
+   			{ "host": "gitlab.com", "owner": "group", "repo": "lib-b" },
+   			...
    		]
    	}
    }

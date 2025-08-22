@@ -97,44 +97,6 @@ setup_output_directory() {
   return 0
 }
 
-# リポジトリ URL から host/owner/repo を抽出
-parse_repo_url() {
-  # 入力: $1 = repository_url
-  local input="$1"
-  local u host path owner repo
-
-  # 余計なプレフィックス・サフィックスを除去
-  u="${input#git+}"
-  u="${u%.git}"
-
-  # 形式に応じて host/path を分解
-  if [[ "$u" =~ ^git@([^:]+):(.+)$ ]]; then
-    host="${BASH_REMATCH[1]}"
-    path="${BASH_REMATCH[2]}"
-  elif [[ "$u" =~ ^ssh://git@([^/]+)/(.+)$ ]]; then
-    host="${BASH_REMATCH[1]}"
-    path="${BASH_REMATCH[2]}"
-  elif [[ "$u" =~ ^https?://([^/]+)/(.+)$ ]]; then
-    host="${BASH_REMATCH[1]}"
-    path="${BASH_REMATCH[2]}"
-  else
-    return 1
-  fi
-
-  # owner/repo 形式へ
-  path="${path%.git}"
-  owner="${path%%/*}"
-  repo="${path#*/}"
-  repo="${repo%%/*}"
-
-  if [[ -z "$host" || -z "$owner" || -z "$repo" ]]; then
-    return 1
-  fi
-
-  # 出力: JSON 1 行
-  jq -n --arg host "$host" --arg owner "$owner" --arg repo "$repo" '{host:$host, owner:$owner, repo:$repo}'
-}
-
 
 ########################################
 # データ取得
@@ -167,18 +129,15 @@ process_raw_data() {
   # 依存の配列を反復処理
   echo "$raw_json" | jq -r '.dependencies // [] | .[] | "\(.platform)\t\(.name)"' | while IFS=$'\t' read -r platform name; do
     # 各依存について repository_url を取得
-    local encoded
-    echo -n "${name}" | jq -sRr @uri
-    encoded=$(url_encode "$name")
     local url
-    url="https://libraries.io/api/${platform}/${encoded}"
+    url="https://libraries.io/api/${platform}/$(jq -sRr --arg name "${name}" '@uri')"
     # repository_url / source_code_url など候補を順に採用
     repo_url=$(curl -sS "${url}" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
     if [[ -z "${repo_url}" || "${repo_url}" == "null" ]]; then
       continue
     fi
     # host/owner/repo に分解
-    parsed=$(parse_repo_url "$repo_url" || true)
+    parsed=$(jq -n --arg repo_url "${repo_url}" '{host:$host, owner:$owner, repo:$repo}')
     if [[ -n "${parsed}" ]]; then
       echo "$parsed" >>"$libs_tmp"
     fi

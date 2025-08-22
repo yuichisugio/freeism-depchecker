@@ -39,7 +39,12 @@
    		}
    	},
    	"data": {
-   		"libraries": ["a", "b", "c", "d"]
+   		"libraries": [
+   			[
+   				{ "host": "github.com", "owner": "acme", "repo": "lib-a" },
+   				{ "host": "gitlab.com", "owner": "group", "repo": "lib-b" }
+   			]
+   		]
    	}
    }
    ```

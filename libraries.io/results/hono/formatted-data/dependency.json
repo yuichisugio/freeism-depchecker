@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "createdAt": "2025-08-22",
+    "destinated-oss": {
+      "owner": "honojs",
+      "Repository": "hono"
+    }
+  },
+  "data": {
+    "libraries": [
+      []
+    ]
+  }
+}

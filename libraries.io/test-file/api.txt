@@ -1,0 +1,8 @@
+# 依存関係の取得に使用
+curl 'https://libraries.io/api/github/honojs/hono/dependencies'
+
+# ホスティングサービスのURL取得に使用
+curl 'https://libraries.io/api/NPM/hono'
+
+# パッケージ名が「@namespace/name」の時のリクエスト
+curl 'https://libraries.io/api/npm/%40types%2Fjsdom' > libraries.io/test-file/dependency_4.json

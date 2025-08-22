@@ -6,3 +6,13 @@ curl 'https://libraries.io/api/NPM/hono'
 
 # パッケージ名が「@namespace/name」の時のリクエスト
 curl 'https://libraries.io/api/npm/%40types%2Fjsdom' > libraries.io/test-file/dependency_4.json
+
+./libraries.io/test-file/test.sh
+
+# リポジトリ情報を取得
+encoded_project_name=$(echo -n "@types/prismjs" | jq -sRr '@uri')
+echo "$encoded_project_name"
+url="https://libraries.io/api/npm/${encoded_project_name}"
+echo "$url"
+
+curl -sS "${url}" | jq -r '.repository_url'

@@ -120,21 +120,25 @@ function get_dependencies_raw() {
   return 0
 }
 
-# 依存関係のデータを加工
+# 依存関係のデータのホスティングサービス内のURLを取得
 function get_repo_info() {
   # $1: パッケージマネージャー名
   # $2: プロジェクト名
 
   # リポジトリ情報を取得
+  # -nは、echoにデフォで入る改行コードを削除するために必要。
+  # jqの'@uri'は、URLエンコードを行う。-sは改行込みで取り込む。-RはJSONではなく文字列で出力。-rはJSONではなく文字列で取り込む
   local url
-  url="https://libraries.io/api/${1}/$(jq -sRr --arg project_name "${2}" '@uri')"
+  url="https://libraries.io/api/${1}/$(echo -n "${2}" | jq -sRr '@uri')"
 
   # 出力PATHを作成
   local raw_file
   raw_file="${RESULTS_DIR}/${REPO}/raw-data/repo-info/${1}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
 
   # 取得結果をファイルへ保存しつつ内容を標準出力へ返す
-  curl -sS "${url}" | tee "$raw_file"
+  # jq '.'は、JSONを綺麗に出力するために必要。
+  # curl -sSは、-sがサイレント、-Sがエラー時のみサイレント解除
+  curl -sS "${url}" | tee "$raw_file" | jq '.'
   return 0
 }
 

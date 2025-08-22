@@ -35,7 +35,7 @@ readonly RESULTS_DIR="./results"
 ########################################
 
 # 使用方法の表示
-show_usage() {
+function show_usage() {
   cat <<EOF
     Usage:
       $0 [OWNER] [REPO] [SERVICE]
@@ -69,11 +69,9 @@ if [[ $# -gt 0 && ("$1" == "-h" || "$1" == "--help") ]]; then
 fi
 
 ########################################
-# 共通ユーティリティ
-########################################
-
 # 出力ディレクトリの作成
-setup_output_directory() {
+########################################
+function setup_output_directory() {
   # RESULTS_DIRディレクトリが存在しない場合は作成
   if [[ ! -d "$RESULTS_DIR" ]]; then
     mkdir -p "$RESULTS_DIR"
@@ -84,9 +82,14 @@ setup_output_directory() {
     mkdir -p "${RESULTS_DIR}/${REPO}"
   fi
 
-  # raw-dataディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data"
+  # raw-data/dependenciesディレクトリが存在しない場合は作成
+  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data/dependencies" ]]; then
+    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data/dependencies"
+  fi
+
+  # raw-data/repo-infoディレクトリが存在しない場合は作成
+  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data/repo-info" ]]; then
+    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data/repo-info"
   fi
 
   # formatted-dataディレクトリが存在しない場合は作成
@@ -100,20 +103,45 @@ setup_output_directory() {
 ########################################
 # データ取得
 ########################################
-get_dependencies_raw() {
+
+# 依存関係のデータを取得
+function get_dependencies_raw() {
   # 指定リポジトリの依存関係（libraries.io）を取得
   local url
   url="https://libraries.io/api/${SERVICE}/${OWNER}/${REPO}/dependencies"
+
+  # 出力PATHを作成
   local raw_file
-  raw_file="${RESULTS_DIR}/${REPO}/raw-data/${SERVICE}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+  raw_file="${RESULTS_DIR}/${REPO}/raw-data/dependencies/${SERVICE}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+
   # 取得結果をファイルへ保存しつつ内容を標準出力へ返す
   curl -sS "$url" | tee "$raw_file"
+
+  return 0
+}
+
+# 依存関係のデータを加工
+function get_repo_info() {
+  # $1: パッケージマネージャー名
+  # $2: プロジェクト名
+
+  # リポジトリ情報を取得
+  local url
+  url="https://libraries.io/api/${1}/$(jq -sRr --arg project_name "${2}" '@uri')"
+
+  # 出力PATHを作成
+  local raw_file
+  raw_file="${RESULTS_DIR}/${REPO}/raw-data/repo-info/${1}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+
+  # 取得結果をファイルへ保存しつつ内容を標準出力へ返す
+  curl -sS "${url}" | tee "$raw_file"
+  return 0
 }
 
 ########################################
 # 加工
 ########################################
-process_raw_data() {
+function process_raw_data() {
   # $1: 依存関係の raw JSON
   local raw_json="$1"
 
@@ -124,17 +152,22 @@ process_raw_data() {
   trap 'rm -f "$libs_tmp"' EXIT
 
   # 依存の配列を反復処理
-  echo "$raw_json" | jq -r '.dependencies // [] | .[] | "\(.platform)\t\(.name)"' | while IFS=$'\t' read -r platform name; do
-    # 各依存について repository_url を取得
-    local url
-    url="https://libraries.io/api/${platform}/$(jq -sRr --arg name "${name}" '@uri')"
+  jq -r '.dependencies // [] | .[] | "\(.platform)\t\(.project_name)"' --argjson raw_json "$raw_json" | while IFS=$'\t' read -r platform project_name; do
+
+    # 各依存について repository_urlのAPIで取得
+    local repo_info
+    repo_info=$(get_repo_info "$platform" "$project_name")
+
     # repository_url / source_code_url など候補を順に採用
-    repo_url=$(curl -sS "${url}" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
+    repo_url=$(echo "$repo_info" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
+
     if [[ -z "${repo_url}" || "${repo_url}" == "null" ]]; then
       continue
     fi
+
     # host/owner/repo に分解
     parsed=$(jq -n --arg repo_url "${repo_url}" '{host:$host, owner:$owner, repo:$repo}')
+
     if [[ -n "${parsed}" ]]; then
       echo "$parsed" >>"$libs_tmp"
     fi
@@ -166,14 +199,14 @@ process_raw_data() {
     }')
 
   # 結果を返す
-  echo "$formatted_output_json"
+  tee "$formatted_output_json"
   return 0
 }
 
 ########################################
 # 保存
 ########################################
-save_output() {
+function save_output() {
   # $1: 出力 JSON
   local json="$1"
   local out_file="${RESULTS_DIR}/${REPO}/formatted-data/dependency.json"
@@ -181,8 +214,10 @@ save_output() {
   echo "Saved: $out_file"
 }
 
+########################################
 # 実行の流れを定義
-main() {
+########################################
+function main() {
   # 出力ディレクトリの作成
   setup_output_directory
 
@@ -200,5 +235,7 @@ main() {
   return 0
 }
 
+########################################
 # スクリプトを実行
+########################################
 main

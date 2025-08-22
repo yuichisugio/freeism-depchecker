@@ -105,7 +105,7 @@ function setup_output_directory() {
 ########################################
 
 # 依存関係のデータを取得
-function get_dependencies_raw() {
+function get_dependencies() {
   # 指定リポジトリの依存関係（libraries.io）を取得
   local url
   url="https://libraries.io/api/${SERVICE}/${OWNER}/${REPO}/dependencies"
@@ -165,6 +165,7 @@ function process_raw_data() {
     # repository_url / source_code_url など候補を順に採用
     repo_url=$(echo "$repo_info" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
 
+    # repo_urlがない場合は、スキップ
     if [[ -z "${repo_url}" || "${repo_url}" == "null" ]]; then
       continue
     fi
@@ -172,6 +173,7 @@ function process_raw_data() {
     # host/owner/repo に分解
     parsed=$(jq -n --arg repo_url "${repo_url}" '{host:$host, owner:$owner, repo:$repo}')
 
+    # parsedが空の場合は、スキップ
     if [[ -n "${parsed}" ]]; then
       echo "$parsed" >>"$libs_tmp"
     fi
@@ -195,7 +197,7 @@ function process_raw_data() {
     '{
       meta: {
         createdAt: $createdAt,
-        "destinated-oss": { owner: $owner, Repository: $repo }
+        "destinated-oss": { owner: $owner, repository: $repo }
       },
       data: {
         libraries:  $libs
@@ -227,7 +229,7 @@ function main() {
 
   # 1) 依存関係の raw を取得
   local raw_data
-  raw_data=$(get_dependencies_raw)
+  raw_data=$(get_dependencies)
 
   # 2) README 形式に整形
   local output_json

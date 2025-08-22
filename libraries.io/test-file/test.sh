@@ -1,58 +1,28 @@
 #!/bin/bash
 
+# Libraries.io から依存関係を取得するファイル
+
+########################################
+# 設定
+########################################
+
+# エラー検知、パイプラインのエラー検知、未定義変数のエラー検知で、即時停止
 set -euo pipefail
 
+# スクリプトのディレクトリに移動。相対PATHを安定させる。
 cd "$(dirname "$0")"
 
-readonly OWNER=${1:-"yoshiko-pg"}
-readonly REPO=${2:-"difit"}
-readonly RESULTS_DIR="./results"
+raw_json="$1"
 
-function setup_output_directory() {
-  # RESULTS_DIRディレクトリが存在しない場合は作成
-  if [[ ! -d "$RESULTS_DIR" ]]; then
-    mkdir -p "$RESULTS_DIR"
-  fi
+# 依存ライブラリの (platform, name) を抽出
+# 一部の platform/name は repository_url が無い場合があるため、その場合はスキップ
+libs_tmp=$(mktemp)
+trap 'rm -f "$libs_tmp"' EXIT
+echo "$libs_tmp"
 
-  # REPOディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}"
-  fi
-
-  # raw-data/dependenciesディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data/dependencies" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data/dependencies"
-  fi
-
-  # raw-data/repo-infoディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data/repo-info" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data/repo-info"
-  fi
-
-  # formatted-dataディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/formatted-data" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/formatted-data"
-  fi
-
-  return 0
-}
-
-function get_repo_info() {
-  # $1: パッケージマネージャー名
-  # $2: プロジェクト名
-
-  # リポジトリ情報を取得
-  local url
-  url="https://libraries.io/api/${1}/$(echo -n "${2}" | jq -sRr '@uri')"
-
-  # 出力PATHを作成
-  local raw_file
-  raw_file="${RESULTS_DIR}/${REPO}/raw-data/repo-info/${1}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
-
-  # 取得結果をファイルへ保存しつつ内容を標準出力へ返す
-  curl -sS "${url}" | tee "$raw_file" | jq '.'
-  return 0
-}
-
-setup_output_directory
-get_repo_info npm @types/prismjs
+# # 依存の配列を反復処理
+while IFS=$'\t' read -r platform project_name; do
+  echo "start: $platform $project_name"
+  echo "$platform $project_name"
+  echo "end: $platform $project_name"
+done <<< "$(echo "$raw_json" | jq -r '.dependencies // [] | .[] | "\(.platform)\t\(.project_name)"')"

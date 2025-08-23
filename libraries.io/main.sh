@@ -230,8 +230,12 @@ function get_repo_info() {
   local url
   url="https://libraries.io/api/${platform}/${encoded}?api_key=${API_KEY}"
 
+  # ★ ファイル名用: スラッシュをハイフンに置換（@eslint/eslintrc → @eslint-eslintrc）
+  #    Bashのパラメータ展開で「全部置換」: ${変数//検索/置換}
+  # /のままだと、ファイル名になってしまうため、ハイフンに置換
+  local project_file_name="${project//\//-}"
   local raw_file
-  raw_file="${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/repo-info/${platform}-${project}-$(date +%Y%m%d_%H%M%S).json"
+  raw_file="${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/repo-info/${platform}-${project_file_name}-$(date +%Y%m%d_%H%M%S).json"
 
   # ここで JSON を取得（429/503 は内部でリトライ）
   # 成功したら整形して標準出力に返す（呼び出し元の repo_info=$(...) に入る）
@@ -274,11 +278,46 @@ function parse_repo_url() {
 }
 
 ########################################
+# 共通: 進捗表示（同一行を上書き）
+########################################
+# 使い方: update_progress <done> <total>
+# - 端末(TTY)のときは同じ行を上書き（\r と \033[K を使用）
+# - 非TTY（ログ等）のときは毎回改行してもOK
+function update_progress() {
+  local done="$1" total="$2"
+  if [[ -t 2 ]]; then
+    # \r: 行頭へ戻る, \033[K: カーソルから行末まで消去
+    printf '\r\033[K進捗: 取得済み/合計 %d/%d' "$done" "$total" >&2
+  else
+    printf '進捗: 取得済み/合計 %d/%d\n' "$done" "$total" >&2
+  fi
+}
+
+########################################
 # 加工
 ########################################
 function process_raw_data() {
   # $1: 依存関係の raw JSON
   local raw_file_path="$1"
+
+  # 総件数を先に算出（実際のイテレーションと同じ jq で処理するため）
+  local total_deps
+  total_deps="$(
+    jq -r '
+      .dependencies // []
+      | map({ platform, project_name })
+      | map(select(.platform != null and .project_name != null))
+      | sort_by(.platform, .project_name)
+      | unique_by(.platform, .project_name)
+      | length
+    ' "$raw_file_path"
+  )"
+
+  # 進捗カウンタ初期化＆最初の表示（0/total）
+  local done=0
+  if ((total_deps > 0)); then
+    update_progress "$done" "$total_deps"
+  fi
 
   # 各オブジェクトを1行ずつ貯めるNDJSONファイル。一時ファイルに保存しないとjqの引数の最大量を超えてしまう
   local libs_ndjson
@@ -340,6 +379,10 @@ function process_raw_data() {
     # 1行1オブジェクトで追記（NDJSON）
     printf '%s\n' "$combined" >>"$libs_ndjson"
 
+    # 反復の最初にカウント進めて表示を更新 ===
+    ((done++))
+    update_progress "$done" "$total_deps"
+
   done < <(
     jq -r '
       .dependencies // []
@@ -352,6 +395,11 @@ function process_raw_data() {
       | @tsv
     ' "$raw_file_path"
   )
+
+  # === 追加: 進捗行を確定させるための改行（stderr） ===
+  if ((total_deps > 0)); then
+    printf '\n' >&2
+  fi
 
   # Bash配列(各行が JSON オブジェクト) → jq --slurp(-s) で JSON 配列へ
   libs_json="$(

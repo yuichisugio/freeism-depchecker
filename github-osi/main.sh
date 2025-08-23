@@ -4,13 +4,34 @@
 
 set -euo pipefail
 
-cd "$(dirname "$0")"
+cd "$(readlink -f "$(dirname -- "$0")")"
 
-# デフォルト設定
+# curlのインストールを確認
+if ! command -v curl >/dev/null; then
+  echo "ERROR: curlが必要です。" >&2
+  exit 1
+fi
+
+# ghのインストールを確認
+if ! command -v gh >/dev/null; then
+  echo "ERROR: ghが必要です。" >&2
+  exit 1
+fi
+
+# ghでログインしているか確認
+if ! gh auth status >/dev/null; then
+  echo "ERROR: ghが認証されていません。" >&2
+  exit 1
+fi
+
+# 引数: OWNER / REPO
 readonly OWNER=${1:-"yoshiko-pg"}
 readonly REPO=${2:-"difit"}
 readonly RESULTS_DIR="./results"
 
+########################################
+# ヘルプ表示
+########################################
 # 使用方法の表示
 show_usage() {
   cat <<EOF
@@ -43,6 +64,38 @@ if [[ $# -gt 0 && ("$1" == "-h" || "$1" == "--help") ]]; then
   show_usage
   exit 0
 fi
+
+########################################
+# RateLimitを確認
+########################################
+function check_ratelimit() {
+  local ratelimit
+  ratelimit=$(gh api /rate_limit)
+  printf '%s' "$ratelimit"
+  return 0
+}
+
+if [[ $# -gt 0 && ("$1" == "-r" || "$1" == "--ratelimit") ]]; then
+  check_ratelimit
+  exit 0
+fi
+
+########################################
+# APIリクエスト
+########################################
+function get_sbom() {
+  local sbom
+  sbom=$(
+    gh api \
+      -H "Accept: application/vnd.github+json" \
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      /repos/"${OWNER}"/"${REPO}"/dependency-graph/sbom
+  )
+
+  printf '%s' "$sbom"
+
+  return 0
+}
 
 # 出力ディレクトリの準備
 setup_output_directory() {
@@ -104,7 +157,6 @@ function main() {
 
 # スクリプトを実行
 main
-
 
 #!/bin/bash
 
@@ -169,8 +221,8 @@ function get_raw_data() {
   gh api \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
-    /repos/"${OWNER}"/"${REPO}"/dependency-graph/sbom \
-    | tee "${RESULTS_DIR}/raw-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+    /repos/"${OWNER}"/"${REPO}"/dependency-graph/sbom |
+    tee "${RESULTS_DIR}/raw-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
 
   return 0
 }

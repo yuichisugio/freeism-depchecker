@@ -90,7 +90,7 @@ function http_get_json() {
   local out="$2"
   local max_retries=5 # リトライ上限
   local attempt=1
-  local headers tmp body code ctype retry_after wait
+  local headers tmp code ctype retry_after wait jitter_ms
 
   while :; do
     headers="$(mktemp)"
@@ -102,7 +102,11 @@ function http_get_json() {
     )"
 
     # Content-Type を取得（複数行ある場合もあるため最後を採用）
-    ctype="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/ {gsub(/\r/,""); ct=$2} END{print tolower(ct)}' "$headers")"
+    ctype="$(
+      awk 'BEGIN{IGNORECASE=1}
+           /^content-type:/ {gsub(/\r/,""); sub(/^[^:]+:[[:space:]]*/,""); ct=$0}
+           END{print tolower(ct)}' "$headers"
+    )"
     retry_after="$(awk 'BEGIN{IGNORECASE=1} /^retry-after:/ {gsub(/\r/,""); print $2}' "$headers")"
 
     if [[ "$code" == "200" && "$ctype" == application/json* ]]; then
@@ -111,7 +115,7 @@ function http_get_json() {
         mv "$tmp" "$out"
         cat "$out" # 呼び出し元へJSONを返す
         rm -f "$headers"
-        sleep "$RATE_LIMIT_DELAY"
+        sleep "${RATE_LIMIT_DELAY:-0}"
         return 0
       fi
       # JSONが壊れている場合（まれ）
@@ -165,23 +169,23 @@ function setup_output_directory() {
   fi
 
   # REPOディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}"
+  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}" ]]; then
+    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}"
   fi
 
   # raw-data/dependenciesディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data/dependencies" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data/dependencies"
+  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/dependencies" ]]; then
+    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/dependencies"
   fi
 
   # raw-data/repo-infoディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/raw-data/repo-info" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/raw-data/repo-info"
+  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/repo-info" ]]; then
+    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/repo-info"
   fi
 
   # formatted-dataディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${REPO}/formatted-data" ]]; then
-    mkdir -p "${RESULTS_DIR}/${REPO}/formatted-data"
+  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/formatted-data" ]]; then
+    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/formatted-data"
   fi
 
   return 0
@@ -199,7 +203,7 @@ function get_dependencies() {
 
   # 出力PATHを作成
   local raw_file
-  raw_file="${RESULTS_DIR}/${REPO}/raw-data/dependencies/${SERVICE}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+  raw_file="${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/dependencies/${SERVICE}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
 
   # 成功時はファイルに保存し、ファイルパスを標準出力に返す
   if http_get_json "$url" "$raw_file" >/dev/null; then
@@ -227,7 +231,7 @@ function get_repo_info() {
   url="https://libraries.io/api/${platform}/${encoded}?api_key=${API_KEY}"
 
   local raw_file
-  raw_file="${RESULTS_DIR}/${REPO}/raw-data/repo-info/${platform}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+  raw_file="${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/raw-data/repo-info/${platform}-${project}-$(date +%Y%m%d_%H%M%S).json"
 
   # ここで JSON を取得（429/503 は内部でリトライ）
   # 成功したら整形して標準出力に返す（呼び出し元の repo_info=$(...) に入る）
@@ -276,7 +280,10 @@ function process_raw_data() {
   # $1: 依存関係の raw JSON
   local raw_file_path="$1"
 
-  local libs_array=()
+  # 各オブジェクトを1行ずつ貯めるNDJSONファイル。一時ファイルに保存しないとjqの引数の最大量を超えてしまう
+  local libs_ndjson
+  libs_ndjson="$(mktemp)"
+  trap 'rm -f -- "$libs_ndjson"' RETURN
 
   # 依存ライブラリの (platform, name) を抽出
   while IFS=$'\t' read -r platform project_name; do
@@ -286,7 +293,7 @@ function process_raw_data() {
     repo_info="$(get_repo_info "$platform" "$project_name" || true)"
 
     if [[ -z "${repo_info:-}" ]]; then
-      echo "skip: repo_info fetch failed ($platform $project_name)"
+      echo "skip: repo_info fetch failed ($platform $project_name)" >&2
       continue
     fi
 
@@ -296,7 +303,7 @@ function process_raw_data() {
 
     # URL がなければスキップ
     [[ -z "$repo_url" ]] && {
-      echo "skip: no repo_url"
+      echo "skip: no repo_url" >&2
       continue
     }
 
@@ -304,59 +311,63 @@ function process_raw_data() {
 
     # 解析に失敗（empty）ならスキップ
     [[ -z "$parsed" ]] && {
-      echo "skip: parse failed ($repo_url)"
+      echo "skip: parse failed ($repo_url)" >&2
       continue
     }
+
+    local repo_tmp combined
+    repo_tmp="$(mktemp)"
+    printf '%s' "$repo_info" >"$repo_tmp"
 
     combined="$(
       jq -cn \
         --argjson base "$parsed" \
-        --argjson info "$repo_info" \
-        '
-        # 取り出し（空なら ""）
-        ($info.homepage // "")               as $homepage |
-        ($info.package_manager_url // "")    as $pm       |
-        ($info.repository_url // "")         as $repo_url |
-        # base + 追加フィールド
-        $base + {
-          homepage:           $homepage,
-          package_manager_url:$pm,
-          repository_url:     $repo_url
+        --slurpfile info "$repo_tmp" '
+        # $info[0] が取得JSON（オブジェクト）
+        ($info|length > 0 and ($info[0]|type=="object")) as $ok |
+        (if $ok then $info[0] else {} end) as $info0 |
+        {
+          homepage: ($info0.homepage // ""),
+          package_manager_url: ($info0.package_manager_url // ""),
+          repository_url: ($info0.repository_url // $info0.source_code_url // $info0.github_repo_url // $info0.homepage // "")
         }
-        # 値が空文字のキーは削除
-        | with_entries(select(.value != ""))
+        | with_entries(select(.value != ""))     # 空文字は削除
+        | $base + .                              # 解析した host/owner/repo に追加
       '
     )"
+    rm -f "$repo_tmp"
 
-    # JSON 文字列を Bash 配列に追加（※要素は1オブジェクト）
-    libs_array+=("$combined")
-    printf '%s\n' "$combined"
+    # 1行1オブジェクトで追記（NDJSON）
+    printf '%s\n' "$combined" >>"$libs_ndjson"
 
   done < <(
     jq -r '
-    # 1) 依存配列を安全に取り出し（なければ空配列）
-    .dependencies // []
-
-    # 2) 配列内の各要素オブジェクトを順番に取り出して、次のパイプに渡す
-    | .[]
-
-    # 3) 出力したい2列（配列）を作る。@tsv は配列を1行のタブ区切り文字列に変換するためのもの。
-    | [.platform, .project_name] 
-
-    # 4) 1行TSVに整形
-    | @tsv
-  ' "$raw_file_path"
+      .dependencies // []
+      | map({ platform, project_name })
+      | map(select(.platform != null and .project_name != null))
+      | sort_by(.platform, .project_name)
+      | unique_by(.platform, .project_name)
+      | .[]
+      | [.platform, .project_name]
+      | @tsv
+    ' "$raw_file_path"
   )
 
   # Bash配列(各行が JSON オブジェクト) → jq --slurp(-s) で JSON 配列へ
-  libs_json="$(printf '%s\n' "${libs_array[@]}" | jq -s '.')"
+  libs_json="$(
+    jq -s '
+      ( . // [] )
+      | sort_by(.host // "", .owner // "", .repo // "", .repository_url // "")
+      | unique_by(.host // "", .owner // "", .repo // "", .repository_url // "")
+    ' "$libs_ndjson"
+  )"
 
   # 最終 JSON を組み立て（--arg は文字列、--argjson は JSON 値を受け取る）
   formatted_output_json="$(
     jq -n \
       --arg createdAt "$(date +%Y-%m-%d)" \
-      --arg owner "testOwner" \
-      --arg repo "testRepo" \
+      --arg owner "$OWNER" \
+      --arg repo "$REPO" \
       --argjson libs "$libs_json" \
       '{
       meta: {
@@ -378,9 +389,10 @@ function process_raw_data() {
 function save_output() {
   # $1: 出力 JSON
   local json="$1"
-  local out_file="${RESULTS_DIR}/${REPO}/formatted-data/dependency.json"
+  local out_file
+  out_file="${RESULTS_DIR}/${OWNER}-${REPO}-${SERVICE}/formatted-data/dependency_$(date +%Y%m%d_%H%M%S).json"
   echo "$json" | jq '.' >"$out_file"
-  echo "Saved: $out_file"
+  echo "Saved: $out_file" >&2
 }
 
 ########################################

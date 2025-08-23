@@ -10,7 +10,7 @@
 set -euo pipefail
 
 # スクリプトのディレクトリに移動。相対PATHを安定させる。
-cd "$(dirname "$0")"
+cd "$(readlink -f "$(dirname -- "$0")")"
 
 # curlのインストールを確認
 if ! command -v curl >/dev/null; then
@@ -129,7 +129,7 @@ function get_repo_info() {
   # -nは、echoにデフォで入る改行コードを削除するために必要。
   # jqの'@uri'は、URLエンコードを行う。-sは改行込みで取り込む。-RはJSONではなく文字列で出力。-rはJSONではなく文字列で取り込む
   local url
-  url="https://libraries.io/api/${1}/$(echo -n "${2}" | jq -sRr '@uri')"
+  url="https://libraries.io/api/${1}/$(printf '%s' "${2}" | jq -sRr '@uri')"
 
   # 出力PATHを作成
   local raw_file
@@ -139,6 +139,40 @@ function get_repo_info() {
   # jq '.'は、JSONを綺麗に出力するために必要。
   # curl -sSは、-sがサイレント、-Sがエラー時のみサイレント解除
   curl -sS "${url}" | tee "$raw_file" | jq '.'
+  return 0
+}
+
+########################################
+# データ抽出
+########################################
+
+# リポジトリURLを {host, owner, repo} に分解する
+function parse_repo_url() {
+  local url="$1"
+  # jq -n: 標準入力を読まず null から評価。--arg u で $u に URL を渡す
+  jq -cn --arg u "$url" '
+    # まずスキームや www.、末尾の / を正規化
+    ($u
+      | sub("^git\\+https?://"; "https://")   # git+https:// → https://
+      | sub("^https?://"; "")                 # スキーム除去
+      | sub("^www\\."; "")                    # www. 除去
+      | gsub("/+$"; "")                       # 末尾の / 群を除去
+    ) as $norm
+    # host/owner/repo/… に分割
+    | ($norm | split("/")) as $p
+    # 最低でも host, owner, repo の3要素が必要
+    | if ($p|length) < 3 then empty else
+        {
+          host:  $p[0],
+          owner: $p[1],
+          # repo は .git, ?query, #fragment を除去
+          repo:  ($p[2]
+                   | sub("\\.git$"; "")
+                   | split("?")[0]
+                   | split("#")[0])
+        }
+      end
+  '
   return 0
 }
 
@@ -159,21 +193,46 @@ function process_raw_data() {
     repo_info=$(get_repo_info "$platform" "$project_name")
 
     # repository_url / source_code_url など候補を順に採用
-    repo_url=$(printf '%s' "$repo_info" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
+    repo_url="$(printf '%s' "$repo_info" |
+      jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // empty)')"
 
-    # repo_urlがない場合は、スキップ
-    if [[ -z "${repo_url}" || "${repo_url}" == "null" ]]; then
+    # URL がなければスキップ
+    [[ -z "$repo_url" ]] && {
+      echo "skip: no repo_url"
       continue
-    fi
+    }
 
-    # host/owner/repo に分解
-    parsed=$(jq -n --arg repo_url "${repo_url}" '{host:$host, owner:$owner, repo:$repo}')
+    parsed="$(parse_repo_url "$repo_url")"
 
-    # parsedが空の場合は、スキップ
-    if [[ -n "${parsed}" ]]; then
-      libs_array+=("$parsed")
-      printf '%s\n' "$parsed"
-    fi
+    # 解析に失敗（empty）ならスキップ
+    [[ -z "$parsed" ]] && {
+      echo "skip: parse failed ($repo_url)"
+      continue
+    }
+
+    combined="$(
+      jq -cn \
+        --argjson base "$parsed" \
+        --argjson info "$repo_info" \
+        '
+        # 取り出し（空なら ""）
+        ($info.homepage // "")               as $homepage |
+        ($info.package_manager_url // "")    as $pm       |
+        ($info.repository_url // "")         as $repo_url |
+        # base + 追加フィールド
+        $base + {
+          homepage:           $homepage,
+          package_manager_url:$pm,
+          repository_url:     $repo_url
+        }
+        # 値が空文字のキーは削除
+        | with_entries(select(.value != ""))
+      '
+    )"
+
+    # JSON 文字列を Bash 配列に追加（※要素は1オブジェクト）
+    libs_array+=("$combined")
+    printf '%s\n' "$combined"
 
   done < <(
     jq -r '
@@ -191,22 +250,24 @@ function process_raw_data() {
   ' "$raw_json"
   )
 
-  # 出力 JSON を構築
-  local formatted_output_json
-  formatted_output_json=$(jq -n \
-    --arg createdAt "$(date +%Y-%m-%d)" \
-    --arg owner "$OWNER" \
-    --arg repo "$REPO" \
-    --argjson libs "$libs_array" \
-    '{
+  # Bash配列(各行が JSON オブジェクト) → jq --slurp(-s) で JSON 配列へ
+  libs_json="$(printf '%s\n' "${libs_array[@]}" | jq -s '.')"
+
+  # 最終 JSON を組み立て（--arg は文字列、--argjson は JSON 値を受け取る）
+  formatted_output_json="$(
+    jq -n \
+      --arg createdAt "$(date +%Y-%m-%d)" \
+      --arg owner "testOwner" \
+      --arg repo "testRepo" \
+      --argjson libs "$libs_json" \
+      '{
       meta: {
         createdAt: $createdAt,
         "destinated-oss": { owner: $owner, repository: $repo }
       },
-      data: {
-        libraries:  $libs
-      }
-    }')
+      data: { libraries: $libs }
+    }'
+  )"
 
   # 結果を返す
   tee "$formatted_output_json" | jq '.'

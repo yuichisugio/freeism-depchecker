@@ -149,14 +149,10 @@ function process_raw_data() {
   # $1: 依存関係の raw JSON
   local raw_json="$1"
 
-  # 依存ライブラリの (platform, name) を抽出
-  # 一部の platform/name は repository_url が無い場合があるため、その場合はスキップ
-  local libs_tmp
-  libs_tmp=$(mktemp)
-  trap 'rm -f "$libs_tmp"' EXIT
+  local libs_array=()
 
-  # 依存の配列を反復処理
-  jq -r '.dependencies // [] | .[] | "\(.platform)\t\(.project_name)"' --argjson raw_json "$raw_json" | while IFS=$'\t' read -r platform project_name; do
+  # 依存ライブラリの (platform, name) を抽出
+  while IFS=$'\t' read -r platform project_name; do
 
     # 各依存について repository_urlのAPIで取得
     local repo_info
@@ -175,17 +171,25 @@ function process_raw_data() {
 
     # parsedが空の場合は、スキップ
     if [[ -n "${parsed}" ]]; then
-      echo "$parsed" >>"$libs_tmp"
+      libs_array+=("$parsed")
+      printf '%s\n' "$parsed"
     fi
-  done
 
-  # 収集した JSON 行を配列へ
-  local libs_array
-  if [[ -s "$libs_tmp" ]]; then
-    libs_array=$(jq -s '.' "$libs_tmp")
-  else
-    libs_array='[]'
-  fi
+  done < <(
+    jq -r '
+    # 1) 依存配列を安全に取り出し（なければ空配列）
+    .dependencies // []
+
+    # 2) 配列内の各要素オブジェクトを順番に取り出して、次のパイプに渡す
+    | .[]
+
+    # 3) 出力したい2列（配列）を作る。@tsv は配列を1行のタブ区切り文字列に変換するためのもの。
+    | [.platform, .project_name] 
+
+    # 4) 1行TSVに整形
+    | @tsv
+  ' "$raw_json"
+  )
 
   # 出力 JSON を構築
   local formatted_output_json
@@ -205,7 +209,7 @@ function process_raw_data() {
     }')
 
   # 結果を返す
-  tee "$formatted_output_json"
+  tee "$formatted_output_json" | jq '.'
   return 0
 }
 

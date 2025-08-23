@@ -284,12 +284,15 @@ function parse_repo_url() {
 # - 端末(TTY)のときは同じ行を上書き（\r と \033[K を使用）
 # - 非TTY（ログ等）のときは毎回改行してもOK
 function update_progress() {
-  local done="$1" total="$2"
+  local done="$1"
+  local total="$2"
+  local progress_message="進捗: 取得済み/合計 ${done}/${total}"
+
   if [[ -t 2 ]]; then
     # \r: 行頭へ戻る, \033[K: カーソルから行末まで消去
-    printf '\r\033[K進捗: 取得済み/合計 %d/%d' "$done" "$total" >&2
+    printf '\r\033[K%s' "$progress_message" >&2
   else
-    printf '進捗: 取得済み/合計 %d/%d\n' "$done" "$total" >&2
+    printf '%s\n' "$progress_message" >&2
   fi
 }
 

@@ -24,4 +24,6 @@
 
 ## メモ
 
-1. Google Open Source Insights からデータを取得する方法
+1. Google Open Source Insights のみで実装できない理由
+
+- 解決済みの依存関係しか取得できない

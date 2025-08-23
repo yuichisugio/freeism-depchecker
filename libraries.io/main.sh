@@ -16,7 +16,7 @@ cd "$(readlink -f "$(dirname -- "$0")")"
 # 例: export LIBRARIES_IO_API_KEY=xxxxx
 API_KEY="${LIBRARIES_IO_API_KEY:-${LIBRARIES_API_KEY:-}}"
 if [[ -z "${API_KEY:-}" ]]; then
-  printf '%s\n' 'ERROR: Libraries.io の API キーが未設定です。LIBRARIES_IO_API_KEY か LIBRARIES_API_KEY を設定してください。' >&2
+  printf '%s\n' 'ERROR: Libraries.io の API キーが未設定です。「LIBRARIES_IO_API_KEY」 または「LIBRARIES_API_KEY」を設定してください。' >&2
   exit 1
 fi
 
@@ -250,28 +250,92 @@ function get_repo_info() {
 # リポジトリURLを {host, owner, repo} に分解する
 function parse_repo_url() {
   local url="$1"
-  # jq -n: 標準入力を読まず null から評価。--arg u で $u に URL を渡す
   jq -cn --arg u "$url" '
-    # まずスキームや www.、末尾の / を正規化
-    ($u
-      | sub("^git\\+https?://"; "https://")   # git+https:// → https://
-      | sub("^https?://"; "")                 # スキーム除去
-      | sub("^www\\."; "")                    # www. 除去
-      | gsub("/+$"; "")                       # 末尾の / 群を除去
-    ) as $norm
-    # host/owner/repo/… に分割
-    | ($norm | split("/")) as $p
-    # 最低でも host, owner, repo の3要素が必要
-    | if ($p|length) < 3 then empty else
-        {
-          host:  $p[0],
+    # ---------- 共通ユーティリティ ----------
+    def strip_repo_suffix:
+      sub("\\.git$"; "")         # 末尾 .git を除去
+      | split("?")[0]            # ?query を除去
+      | split("#")[0];           # #fragment を除去
+
+    # SSH 形式: git@host:owner/repo(.git) を {host, owner, repo} に
+    def parse_ssh($s):
+      ( $s | capture("git@(?<host>[^:]+):(?<path>.+)") ) as $m
+      | ($m.path | strip_repo_suffix | split("/") ) as $pp
+      | if ($pp|length) >= 2 then
+          { host: ($m.host|ascii_downcase), owner: $pp[0], repo: $pp[1] }
+        else {host:"", owner:"", repo:""} end;
+
+    # HTTP(S)/git:// などを https ベースのホスト/パスに正規化
+    def normalize_http($s):
+      $s
+      | gsub("^git\\+https?://"; "https://")
+      | gsub("^git://"; "https://")
+      | gsub("^ssh://git@"; "https://")
+      | sub("^https?://"; "")
+      | sub("^www\\."; "")
+      | gsub("/+$"; "");
+
+    # GitLab: group/subgroup/repo/-/... → owner = group/subgroup, repo = repo
+    def parse_gitlab($p):
+      # 先頭(ホスト)を除いた配列
+      ($p | map(select(. != ""))) as $pp
+      | ($pp | index("-") // ($pp|length)) as $cut   # "/-/" 以降は不要
+      | if $cut >= 3 then
+          { host: ($p[0]|ascii_downcase),
+            owner: ($pp[1:($cut-1)] | join("/")),
+            repo:  ($pp[$cut-1] | strip_repo_suffix) }
+        else
+          # group/repo だけのケース
+          if ($pp|length) >= 3 then
+            { host: ($p[0]|ascii_downcase),
+              owner: $pp[1],
+              repo:  ($pp[2] | strip_repo_suffix) }
+          else {host:"", owner:"", repo:""} end
+        end;
+
+    # Bitbucket Server: /projects/<KEY>/repos/<slug>/...
+    def parse_bitbucket_server($p):
+      if ($p|length) >= 5 and ($p[1]=="projects" and $p[3]=="repos") then
+        { host: ($p[0]|ascii_downcase),
+          owner: $p[2],
+          repo:  ($p[4] | strip_repo_suffix) }
+      else {host:"", owner:"", repo:""} end;
+
+    # デフォルト（GitHub/Bitbucket Cloud 等）: /owner/repo/...
+    def parse_default($p):
+      if ($p|length) >= 3 then
+        { host: ($p[0]|ascii_downcase),
           owner: $p[1],
-          # repo は .git, ?query, #fragment を除去
-          repo:  ($p[2]
-                   | sub("\\.git$"; "")
-                   | split("?")[0]
-                   | split("#")[0])
-        }
+          repo:  (($p[2] // "") | strip_repo_suffix) }
+      else {host:"", owner:"", repo:""} end;
+
+    # ---------- 実処理 ----------
+    ($u // "") as $raw
+    | if ($raw|length) == 0 then {host:"", owner:"", repo:""}
+      elif ($raw | startswith("git@")) then
+        parse_ssh($raw)
+      else
+        ( normalize_http($raw) ) as $norm
+        | ($norm | split("/")) as $p
+        | ($p[0] // "" | ascii_downcase) as $host
+        | if $host == "api.github.com" and ($p|length) >= 4 and ($p[1] == "repos") then
+            # GitHub API: api.github.com/repos/:owner/:repo
+            { host: "github.com",
+              owner: $p[2],
+              repo:  ($p[3] | strip_repo_suffix) }
+          elif $host == "github.com" then
+            # GitHub: github.com/:owner/:repo/(blob|tree|...)/...
+            parse_default($p)
+          elif ($host|test("(^|\\.)gitlab\\.[^/]+$")) then
+            # GitLab / self-hosted GitLab
+            parse_gitlab($p)
+          elif ($host|test("(^|\\.)bitbucket\\.[^/]+$")) then
+            # Bitbucket Server (projects/<KEY>/repos/<slug>) 優先
+            (parse_bitbucket_server($p) as $bb
+             | if $bb.repo != "" then $bb else parse_default($p) end)
+          else
+            parse_default($p)
+          end
       end
   '
   return 0
@@ -339,9 +403,29 @@ function process_raw_data() {
       continue
     fi
 
-    # repository_url / source_code_url など候補を順に採用
-    repo_url="$(printf '%s' "$repo_info" |
-      jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // empty)')"
+    # repository_url / source_code_url など候補を順に採用（空でもOK：スキップしない）
+    local repo_url
+    local parsed
+
+    repo_url="$(
+      printf '%s' "$repo_info" | jq -r '
+    # 空白をトリムし、「非空の文字列」だけを残す補助関数
+    def nonempty: select(type=="string") | gsub("^\\s+|\\s+$"; "") | select(. != "");
+
+    # 候補URLの優先順位リスト（上から順に採用）
+    [
+      .repository_url,
+      .source_code_url,
+      .github_repo_url,
+      .security_policy_url,
+      .code_of_conduct_url,
+      .contribution_guidelines_url,
+      .homepage
+    ]
+    | map(nonempty)        # 非空だけを残す
+    | .[0] // ""           # 先頭（最初に見つかった非空）か、無ければ空文字
+  '
+    )"
 
     # URL がなければスキップ
     [[ -z "$repo_url" ]] && {
@@ -373,7 +457,6 @@ function process_raw_data() {
           package_manager_url: ($info0.package_manager_url // ""),
           repository_url: ($info0.repository_url // $info0.source_code_url // $info0.github_repo_url // $info0.homepage // "")
         }
-        | with_entries(select(.value != ""))     # 空文字は削除
         | $base + .                              # 解析した host/owner/repo に追加
       '
     )"

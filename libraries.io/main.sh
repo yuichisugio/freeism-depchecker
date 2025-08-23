@@ -12,6 +12,17 @@ set -euo pipefail
 # スクリプトのディレクトリに移動。相対PATHを安定させる。
 cd "$(readlink -f "$(dirname -- "$0")")"
 
+# 環境変数から API キーを受け取る（どちらか設定されていればOK）
+# 例: export LIBRARIES_IO_API_KEY=xxxxx
+API_KEY="${LIBRARIES_IO_API_KEY:-${LIBRARIES_API_KEY:-}}"
+if [[ -z "${API_KEY:-}" ]]; then
+  printf '%s\n' 'ERROR: Libraries.io の API キーが未設定です。LIBRARIES_IO_API_KEY か LIBRARIES_API_KEY を設定してください。' >&2
+  exit 1
+fi
+
+# 連続呼び出しの最小間隔（秒）。60req/min を超えないための保険。
+RATE_LIMIT_DELAY="${RATE_LIMIT_DELAY:-1.2}"
+
 # curlのインストールを確認
 if ! command -v curl >/dev/null; then
   echo "ERROR: curlが必要です。" >&2
@@ -69,6 +80,82 @@ if [[ $# -gt 0 && ("$1" == "-h" || "$1" == "--help") ]]; then
 fi
 
 ########################################
+# 共通: JSON専用のHTTP GET (429/503はリトライ)
+########################################
+# 使い方: http_get_json "<URL>" "<保存ファイルパス>"
+# 成功時: 保存してから内容を標準出力に流す（= 呼び出し元で $(...) で受け取れる）
+# 失敗時: 非0で return
+function http_get_json() {
+  local url="$1"
+  local out="$2"
+  local max_retries=5 # リトライ上限
+  local attempt=1
+  local headers tmp body code ctype retry_after wait
+
+  while :; do
+    headers="$(mktemp)"
+    tmp="$(mktemp)"
+
+    # -D: ヘッダ保存, -o: 本文保存, -w: ステータスコード, -L: リダイレクト追従
+    code="$(
+      curl -sS -L -D "$headers" -o "$tmp" -w '%{http_code}' "$url" || true
+    )"
+
+    # Content-Type を取得（複数行ある場合もあるため最後を採用）
+    ctype="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/ {gsub(/\r/,""); ct=$2} END{print tolower(ct)}' "$headers")"
+    retry_after="$(awk 'BEGIN{IGNORECASE=1} /^retry-after:/ {gsub(/\r/,""); print $2}' "$headers")"
+
+    if [[ "$code" == "200" && "$ctype" == application/json* ]]; then
+      # JSON 妥当性を軽くチェック
+      if jq -e . "$tmp" >/dev/null 2>&1; then
+        mv "$tmp" "$out"
+        cat "$out" # 呼び出し元へJSONを返す
+        rm -f "$headers"
+        sleep "$RATE_LIMIT_DELAY"
+        return 0
+      fi
+      # JSONが壊れている場合（まれ）
+      echo "WARN: Invalid JSON in 200 response ($url)" >&2
+      mv "$tmp" "${out}.invalid"
+      rm -f "$headers"
+      return 1
+    fi
+
+    # 429/503: レート制限 or 一時的エラー → バックオフしてリトライ
+    if [[ "$code" == "429" || "$code" == "503" ]]; then
+      # Retry-After があれば優先。無ければ指数バックオフ（1,2,4,8,16秒）＋±0-300msジッタ
+      wait="${retry_after:-$((2 ** (attempt - 1)))}"
+      jitter_ms=$((RANDOM % 300))
+      echo "INFO: HTTP $code for $url. Retrying in ${wait}.${jitter_ms}s ..." >&2
+      sleep "${wait}.$(printf '%03d' "$jitter_ms")"
+      ((attempt++))
+      if ((attempt > max_retries)); then
+        echo "ERROR: Exceeded max retries for $url" >&2
+        mv "$tmp" "${out}.errbody"
+        rm -f "$headers"
+        return 1
+      fi
+      rm -f "$headers" "$tmp"
+      continue
+    fi
+
+    # 401/403: 認証・権限エラー（APIキー不備など）
+    if [[ "$code" == "401" || "$code" == "403" ]]; then
+      echo "ERROR: HTTP $code (auth). Check your Libraries.io API key. URL=$url" >&2
+      mv "$tmp" "${out}.errbody"
+      rm -f "$headers"
+      return 1
+    fi
+
+    # その他のエラー
+    echo "ERROR: HTTP $code for $url (ctype=$ctype). Body saved to ${out}.errbody" >&2
+    mv "$tmp" "${out}.errbody"
+    rm -f "$headers"
+    return 1
+  done
+}
+
+########################################
 # 出力ディレクトリの作成
 ########################################
 function setup_output_directory() {
@@ -108,37 +195,43 @@ function setup_output_directory() {
 function get_dependencies() {
   # 指定リポジトリの依存関係（libraries.io）を取得
   local url
-  url="https://libraries.io/api/${SERVICE}/${OWNER}/${REPO}/dependencies"
+  url="https://libraries.io/api/${SERVICE}/${OWNER}/${REPO}/dependencies?api_key=${API_KEY}"
 
   # 出力PATHを作成
   local raw_file
   raw_file="${RESULTS_DIR}/${REPO}/raw-data/dependencies/${SERVICE}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
 
-  # 取得結果をファイルへ保存しつつ内容を標準出力へ返す
-  curl -sS "$url" | tee "$raw_file"
-
-  return 0
+  # 成功時はファイルに保存し、ファイルパスを標準出力に返す
+  if http_get_json "$url" "$raw_file" >/dev/null; then
+    printf '%s\n' "${raw_file}"
+    return 0
+  else
+    echo "ERROR: Failed to fetch dependencies from $url" >&2
+    return 1
+  fi
 }
 
 # 依存関係のデータのホスティングサービス内のURLを取得
 function get_repo_info() {
-  # $1: パッケージマネージャー名
-  # $2: プロジェクト名
+  local platform="$1" # 例: npm, pypi など
+  local project="$2"  # 例: react, pandas など
+
+  # プロジェクト名はURLエンコード
+  local encoded
+  encoded="$(printf '%s' "${project}" | jq -sRr '@uri')"
 
   # リポジトリ情報を取得
   # -nは、echoにデフォで入る改行コードを削除するために必要。
   # jqの'@uri'は、URLエンコードを行う。-sは改行込みで取り込む。-RはJSONではなく文字列で出力。-rはJSONではなく文字列で取り込む
   local url
-  url="https://libraries.io/api/${1}/$(printf '%s' "${2}" | jq -sRr '@uri')"
+  url="https://libraries.io/api/${platform}/${encoded}?api_key=${API_KEY}"
 
-  # 出力PATHを作成
   local raw_file
-  raw_file="${RESULTS_DIR}/${REPO}/raw-data/repo-info/${1}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
+  raw_file="${RESULTS_DIR}/${REPO}/raw-data/repo-info/${platform}-${OWNER}-${REPO}-$(date +%Y%m%d_%H%M%S).json"
 
-  # 取得結果をファイルへ保存しつつ内容を標準出力へ返す
-  # jq '.'は、JSONを綺麗に出力するために必要。
-  # curl -sSは、-sがサイレント、-Sがエラー時のみサイレント解除
-  curl -sS "${url}" | tee "$raw_file" | jq '.'
+  # ここで JSON を取得（429/503 は内部でリトライ）
+  # 成功したら整形して標準出力に返す（呼び出し元の repo_info=$(...) に入る）
+  http_get_json "$url" "$raw_file" | jq '.'
   return 0
 }
 
@@ -181,7 +274,7 @@ function parse_repo_url() {
 ########################################
 function process_raw_data() {
   # $1: 依存関係の raw JSON
-  local raw_json="$1"
+  local raw_file_path="$1"
 
   local libs_array=()
 
@@ -190,7 +283,12 @@ function process_raw_data() {
 
     # 各依存について repository_urlのAPIで取得
     local repo_info
-    repo_info=$(get_repo_info "$platform" "$project_name")
+    repo_info="$(get_repo_info "$platform" "$project_name" || true)"
+
+    if [[ -z "${repo_info:-}" ]]; then
+      echo "skip: repo_info fetch failed ($platform $project_name)"
+      continue
+    fi
 
     # repository_url / source_code_url など候補を順に採用
     repo_url="$(printf '%s' "$repo_info" |
@@ -247,7 +345,7 @@ function process_raw_data() {
 
     # 4) 1行TSVに整形
     | @tsv
-  ' "$raw_json"
+  ' "$raw_file_path"
   )
 
   # Bash配列(各行が JSON オブジェクト) → jq --slurp(-s) で JSON 配列へ
@@ -270,7 +368,7 @@ function process_raw_data() {
   )"
 
   # 結果を返す
-  tee "$formatted_output_json" | jq '.'
+  printf '%s\n' "$formatted_output_json" | jq '.'
   return 0
 }
 
@@ -293,12 +391,12 @@ function main() {
   setup_output_directory
 
   # 1) 依存関係の raw を取得
-  local raw_data
-  raw_data=$(get_dependencies)
+  local raw_file_path
+  raw_file_path=$(get_dependencies)
 
   # 2) README 形式に整形
   local output_json
-  output_json=$(process_raw_data "$raw_data")
+  output_json=$(process_raw_data "$raw_file_path")
 
   # 3) 保存
   save_output "$output_json"

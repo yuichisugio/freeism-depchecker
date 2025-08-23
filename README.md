@@ -29,19 +29,32 @@
 1. raw データ
    - 返されたデータをそのまま記載
 2. 以下の形式
+   - `host`,`owner`,`repo`は必須
+   - `package_manager_url`,`repository_url`,`homepage`は任意
    ```json
    {
    	"meta": {
    		"createdAt": "2025-08-20",
-   		"destinated-oss": {
+   		"specified-oss": {
    			"owner": "ryoppippi",
    			"Repository": "ccusage"
    		}
    	},
    	"data": {
    		"libraries": [
-   			{ "host": "github.com", "owner": "acme", "repo": "lib-a" },
-   			{ "host": "gitlab.com", "owner": "group", "repo": "lib-b" },
+   			{
+   				"host": "gitlab.com",
+   				"owner": "group",
+   				"repo": "lib-b"
+   			},
+   			{
+   				"host": "github.com",
+   				"owner": "acme",
+   				"repo": "lib-a",
+   				"package_manager_url":"pack-D",
+   				"homepage":"page-p",
+   				"repository_url":"git/e"
+   			},
    			...
    		]
    	}

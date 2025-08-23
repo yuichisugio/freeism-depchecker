@@ -456,7 +456,7 @@ function process_raw_data() {
           homepage: ($info0.homepage // ""),
           package_manager_url: ($info0.package_manager_url // ""),
           repository_url: ($info0.repository_url // $info0.source_code_url // $info0.github_repo_url // $info0.homepage // "")
-        }
+        } 
         | $base + .                              # 解析した host/owner/repo に追加
       '
     )"
@@ -506,7 +506,7 @@ function process_raw_data() {
       '{
       meta: {
         createdAt: $createdAt,
-        "destinated-oss": { owner: $owner, repository: $repo }
+        "specified-oss": { owner: $owner, repository: $repo }
       },
       data: { libraries: $libs }
     }'

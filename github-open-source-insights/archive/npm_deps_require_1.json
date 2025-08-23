@@ -1,0 +1,17 @@
+{
+  "npm": {
+    "dependencies": {
+      "dependencies": [
+        {
+          "name": "loose-envify",
+          "requirement": "^1.1.0"
+        }
+      ],
+      "devDependencies": [],
+      "optionalDependencies": [],
+      "peerDependencies": [],
+      "bundleDependencies": []
+    },
+    "bundled": []
+  }
+}

@@ -1,0 +1,47 @@
+{
+	"nodes": [
+		{
+			"versionKey": {
+				"system": "NPM",
+				"name": "react",
+				"version": "18.2.0"
+			},
+			"bundled": false,
+			"relation": "SELF",
+			"errors": []
+		},
+		{
+			"versionKey": {
+				"system": "NPM",
+				"name": "js-tokens",
+				"version": "4.0.0"
+			},
+			"bundled": false,
+			"relation": "INDIRECT",
+			"errors": []
+		},
+		{
+			"versionKey": {
+				"system": "NPM",
+				"name": "loose-envify",
+				"version": "1.4.0"
+			},
+			"bundled": false,
+			"relation": "DIRECT",
+			"errors": []
+		}
+	],
+	"edges": [
+		{
+			"fromNode": 0,
+			"toNode": 2,
+			"requirement": "^1.1.0"
+		},
+		{
+			"fromNode": 2,
+			"toNode": 1,
+			"requirement": "^3.0.0 || ^4.0.0"
+		}
+	],
+	"error": ""
+}

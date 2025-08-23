@@ -16,3 +16,5 @@ url="https://libraries.io/api/npm/${encoded_project_name}"
 echo "$url"
 
 curl -sS "${url}" | jq -r '.repository_url'
+
+./libraries.io/test-file/test.sh ./dependency_1.json

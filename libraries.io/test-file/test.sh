@@ -1,28 +1,32 @@
 #!/bin/bash
 
-# Libraries.io から依存関係を取得するファイル
-
-########################################
-# 設定
-########################################
-
-# エラー検知、パイプラインのエラー検知、未定義変数のエラー検知で、即時停止
 set -euo pipefail
-
-# スクリプトのディレクトリに移動。相対PATHを安定させる。
-cd "$(dirname "$0")"
+cd "$(readlink -f "$(dirname -- "$0")")"
 
 raw_json="$1"
 
-# 依存ライブラリの (platform, name) を抽出
-# 一部の platform/name は repository_url が無い場合があるため、その場合はスキップ
 libs_tmp=$(mktemp)
 trap 'rm -f "$libs_tmp"' EXIT
 echo "$libs_tmp"
 
-# # 依存の配列を反復処理
 while IFS=$'\t' read -r platform project_name; do
-  echo "start: $platform $project_name"
-  echo "$platform $project_name"
-  echo "end: $platform $project_name"
-done <<< "$(echo "$raw_json" | jq -r '.dependencies // [] | .[] | "\(.platform)\t\(.project_name)"')"
+  if [[ -z "$platform" || -z "$project_name" ]]; then
+    printf 'skip: %s %s\n' "$platform" "$project_name"
+    continue
+  fi
+  printf '%s %s\n' "$platform" "$project_name"
+done < <(
+  jq -r '
+    # 1) 依存配列を安全に取り出し（なければ空配列）
+    .dependencies // []
+
+    # 2) 配列内の各要素オブジェクトを順番に取り出して、次のパイプに渡す
+    | .[]
+
+    # 3) 出力したい2列（配列）を作る。@tsv は配列を1行のタブ区切り文字列に変換するためのもの。
+    | [.platform, .project_name] 
+
+    # 4) 1行TSVに整形
+    | @tsv
+  ' "$raw_json"
+)

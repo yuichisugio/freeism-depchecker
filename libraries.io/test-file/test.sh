@@ -7,14 +7,25 @@ raw_json="$1"
 
 libs_tmp=$(mktemp)
 trap 'rm -f "$libs_tmp"' EXIT
-echo "$libs_tmp"
+printf '%s\n' "$libs_tmp"
+
+function get_repo_info() {
+  local url
+  url="https://libraries.io/api/${1}/$(printf '%s' "${2}" | jq -sRr '@uri')"
+
+  curl -sS "${url}" | jq '.'
+  return 0
+}
 
 while IFS=$'\t' read -r platform project_name; do
-  if [[ -z "$platform" || -z "$project_name" ]]; then
-    printf 'skip: %s %s\n' "$platform" "$project_name"
-    continue
-  fi
   printf '%s %s\n' "$platform" "$project_name"
+
+  repo_info=$(get_repo_info "$platform" "$project_name")
+
+  repo_url=$(printf '%s' "$repo_info" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
+
+  printf '%s\n' "$repo_url"
+
 done < <(
   jq -r '
     # 1) 依存配列を安全に取り出し（なければ空配列）

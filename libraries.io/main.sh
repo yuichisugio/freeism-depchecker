@@ -163,7 +163,7 @@ function process_raw_data() {
     repo_info=$(get_repo_info "$platform" "$project_name")
 
     # repository_url / source_code_url など候補を順に採用
-    repo_url=$(echo "$repo_info" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
+    repo_url=$(printf '%s' "$repo_info" | jq -r '(.repository_url // .source_code_url // .github_repo_url // .homepage // "")')
 
     # repo_urlがない場合は、スキップ
     if [[ -z "${repo_url}" || "${repo_url}" == "null" ]]; then

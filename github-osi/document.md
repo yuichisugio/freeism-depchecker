@@ -27,3 +27,6 @@
 1. Google Open Source Insights のみで実装できない理由
 
    - 解決済みの依存関係しか取得できない
+
+## 改善点
+- jsrを返す場合に、https://github.com/ryoppippi/limo

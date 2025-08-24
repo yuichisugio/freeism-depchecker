@@ -4,7 +4,6 @@ gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-1
 2. 取得したバージョン、パッケージ名、登録名を指定して、依存ライブラリごとに、ホスティングサービスのowner/repoを取得
 curl 'https://api.deps.dev/v3/systems/NPM/packages/scheduler/versions/0.23.0'
 
-
 # etc
 curl 'https://api.deps.dev/v3/systems/NPM/packages/scheduler/versions/0.23.0' | jq '.' > ./github-open-source-insights/archive/npm_deps_1.json
 
@@ -29,3 +28,12 @@ gh api \
 
 # rate_limit
 gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /rate_limit | jq '.resources.dependency_sbom' | jq -c '.reset |= (strftime("%Y-%m-%d %H:%M:%S UTC"))' | jq '.'
+
+jq '
+  [ .sbom.packages[] | .externalRefs[]? | .referenceLocator ] as $u
+  | {
+      urls: ($u | sort),                         # 1. 一覧（昇順ソート）
+      total: ($u | length),                      # 2-1. 合計数
+      duplicates: (($u | length) - ($u | unique | length))  # 2-2. 重複数
+    }
+' ./github-osi/results/ryoppippi_ccusage/raw-data/raw_20250824_233246.json

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # GitHub Dependency Graph の SBOM を取得して、依存（パッケージ）単位で
 # リポジトリ情報を解決し、formatted-data に “58件” をそのまま出力する版
 

@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "name": "com.github.ryoppippi/ccusage",
+    "createdAt": "2025-08-21T09:50:51Z"
+  },
+  "dependencies": [
+    {
+      "name": "sort-package-json",
+      "purl": "pkg:npm/sort-package-json@3.4.0"
+    },
+    {
+      "name": "unplugin-macros",
+      "purl": "pkg:npm/unplugin-macros@0.17.1"
+    }
+  ]
+}

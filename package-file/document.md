@@ -11,7 +11,10 @@
 ## デメリット
 
 1. 実装が大変
-2. GitHub系の依存ファイルに含まれない依存は別の実装が必要
+2. GitHub Actions系の依存ファイルに含まれない依存は別の実装が必要
+  - GitHub APIのSBON Exportを使用すれば良さそう
+  - GitHub Actionsの依存関係は、package.jsonには表示されない
+  - /.github/workflows/<ファイル名>.yaml
 
 ## メリット
 

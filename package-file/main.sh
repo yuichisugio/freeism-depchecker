@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-cd "$(readlink -f "$(dirname -- "$0")")"
+cd "$(cd "$(dirname -- "$0")" && pwd -P)"

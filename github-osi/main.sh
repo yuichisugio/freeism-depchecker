@@ -10,7 +10,7 @@
 set -euo pipefail
 
 # 相対PATHを安定させる。
-cd "$(readlink -f "$(dirname -- "$0")")"
+cd "$(cd "$(dirname -- "$0")" && pwd -P)"
 
 # curlのインストールを確認
 if ! command -v curl >/dev/null; then
@@ -39,11 +39,11 @@ readonly TS="$(date +%Y%m%d_%H%M%S)"
 readonly TODAY="$(date +%F)"
 
 # 出力ファイル名
-readonly RESULTS_DIR="./results"
-readonly RAW_SBOM_JSON="${RESULTS_DIR}/${OWNER}_${REPO}/raw_${TS}.json"
-readonly PREP_JSON="${RESULTS_DIR}/${OWNER}_${REPO}/prep_${TS}.json"
-readonly LIBS_JSON="${RESULTS_DIR}/${OWNER}_${REPO}/libs_${TS}.json"
-readonly OUTPUT_JSON="${RESULTS_DIR}/${OWNER}_${REPO}/output_${TS}.json"
+readonly RESULTS_DIR="./results/${OWNER}_${REPO}"
+readonly RAW_SBOM_JSON="${RESULTS_DIR}/raw_${TS}.json"
+readonly PREP_JSON="${RESULTS_DIR}/prep_${TS}.json"
+readonly LIBS_JSON="${RESULTS_DIR}/libs_${TS}.json"
+readonly OUTPUT_JSON="${RESULTS_DIR}/output_${TS}.json"
 
 ########################################
 # ヘルプ表示
@@ -261,24 +261,14 @@ function setup_output_directory() {
     mkdir -p "$RESULTS_DIR"
   fi
 
-  # REPOディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}" ]]; then
-    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}"
-  fi
-
-  # raw-data/dependenciesディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}/raw-data/dependencies" ]]; then
-    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}/raw-data/dependencies"
-  fi
-
-  # raw-data/repo-infoディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}/raw-data/repo-info" ]]; then
-    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}/raw-data/repo-info"
+  # raw-dataディレクトリが存在しない場合は作成
+  if [[ ! -d "${RESULTS_DIR}/raw-data" ]]; then
+    mkdir -p "${RESULTS_DIR}/raw-data"
   fi
 
   # formatted-dataディレクトリが存在しない場合は作成
-  if [[ ! -d "${RESULTS_DIR}/${OWNER}-${REPO}/formatted-data" ]]; then
-    mkdir -p "${RESULTS_DIR}/${OWNER}-${REPO}/formatted-data"
+  if [[ ! -d "${RESULTS_DIR}/formatted-data" ]]; then
+    mkdir -p "${RESULTS_DIR}/formatted-data"
   fi
 
   return 0

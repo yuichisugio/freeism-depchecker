@@ -10,7 +10,7 @@
 set -euo pipefail
 
 # スクリプトのディレクトリに移動。相対PATHを安定させる。
-cd "$(readlink -f "$(dirname -- "$0")")"
+cd "$(cd "$(dirname -- "$0")" && pwd -P)"
 
 # 環境変数から API キーを受け取る（どちらか設定されていればOK）
 # 例: export LIBRARIES_IO_API_KEY=xxxxx

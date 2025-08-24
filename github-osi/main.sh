@@ -52,6 +52,7 @@ Description:
 Options:
   -h, --help   ヘルプ
   -r, --ratelimit レートリミット表示
+  -rm, --remove  results 直下のフォルダを対話選択して削除
 
 Output:
   ${OUTPUT_JSON}  # formatted-data（依存=パッケージ単位：重複除去しない）
@@ -78,6 +79,87 @@ check_ratelimit() {
 }
 if [[ ("${1:-}" == "-r" || "${1:-}" == "--ratelimit") ]]; then
   check_ratelimit
+  exit 0
+fi
+
+########################################
+# Remove option
+########################################
+########################################
+# results ディレクトリ配下フォルダの対話削除
+# - 依存: fzf があれば矢印選択。無ければ番号選択にフォールバック
+########################################
+remove_results_directory() {
+  local root_dir="./results"
+
+  if [[ ! -d "$root_dir" ]]; then
+    echo "ERROR: results フォルダが見つかりません: $root_dir" >&2
+    exit 1
+  fi
+
+  # 直下のディレクトリ一覧を取得（フォルダ名のみ）
+  local -a subdirs=()
+  mapfile -t subdirs < <(find "$root_dir" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | sort)
+
+  if [[ ${#subdirs[@]} -eq 0 ]]; then
+    echo "ERROR: results 直下にフォルダがありません。" >&2
+    exit 1
+  fi
+
+  local selected=""
+  if command -v fzf >/dev/null 2>&1; then
+    # fzf がある場合は矢印キーで選択
+    selected="$(printf '%s\n' "${subdirs[@]}" | fzf --prompt='削除対象を選択: ' --height=40% --reverse || true)"
+  else
+    # fzf が無い場合は番号選択
+    echo "fzf が見つからないため、番号選択にフォールバックします。" >&2
+    local i=1 idx
+    for d in "${subdirs[@]}"; do
+      printf '%2d) %s\n' "$i" "$d"
+      i=$((i + 1))
+    done
+    echo " 0) キャンセル"
+    read -r -p "番号を選んでください: " idx
+    if [[ ! "$idx" =~ ^[0-9]+$ || "$idx" -lt 0 || "$idx" -gt ${#subdirs[@]} ]]; then
+      echo "キャンセルしました。" >&2
+      exit 1
+    fi
+    if [[ "$idx" -eq 0 ]]; then
+      echo "キャンセルしました。" >&2
+      exit 0
+    fi
+    selected="${subdirs[$((idx - 1))]}"
+  fi
+
+  if [[ -z "$selected" ]]; then
+    echo "キャンセルしました。" >&2
+    exit 1
+  fi
+
+  local target="$root_dir/$selected"
+
+  # 安全確認
+  if [[ ! -d "$target" ]]; then
+    echo "ERROR: ディレクトリではありません: $target" >&2
+    exit 1
+  fi
+
+  printf '選択: %s\n' "$target"
+  local ans
+  read -r -p "本当に削除しますか? [y/N]: " ans
+  case "$ans" in
+  y | Y | yes | YES)
+    rm -rf -- "$target"
+    echo "削除しました: $target"
+    ;;
+  *)
+    echo "キャンセルしました。"
+    ;;
+  esac
+}
+
+if [[ ("${1:-}" == "-rm" || "${1:-}" == "--remove") ]]; then
+  remove_results_directory
   exit 0
 fi
 

@@ -70,7 +70,15 @@ fi
 ########################################
 function check_ratelimit() {
   local ratelimit
-  ratelimit=$(gh api /rate_limit)
+  ratelimit=$(
+    gh api \
+      -H "Accept: application/vnd.github+json" \
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      /rate_limit |
+      jq '.resources.dependency_sbom' |
+      jq -c '.reset |= (strftime("%Y-%m-%d %H:%M:%S UTC"))' |
+      jq '.'
+  )
   printf '%s' "$ratelimit"
   return 0
 }

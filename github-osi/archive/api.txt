@@ -12,8 +12,6 @@ curl 'https://api.deps.dev//v3/systems/NPM/packages/react/versions/18.2.0:requir
 
 curl 'https://api.deps.dev/v3/systems/NPM/packages/react/versions/18.2.0:dependencies'  | jq '.' > ./github-open-source-insights/archive/npm_deps_dependency_1.json
 
-curl -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/rate_limit
-
 # 1. 指定GitHubリポジトリに紐づくパッケージ版一覧
 curl 'https://api.deps.dev/v3/projects/github.com%2Ffacebook%2Freact:packageversions'
 
@@ -22,3 +20,12 @@ curl 'https://api.deps.dev/v3/systems/NPM/packages/react/versions/18.2.0:depende
 
 # 3. 依存ライブラリごとに、ホスティングサービスのowner/repoを取得
 curl 'https://api.deps.dev/v3/systems/NPM/packages/scheduler/versions/0.23.0'
+
+# sbomの依存関係のみを取得
+gh api \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  /rate_limit | jq '.resources.dependency_sbom'
+
+# rate_limit
+gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /rate_limit | jq '.resources.dependency_sbom' | jq -c '.reset |= (strftime("%Y-%m-%d %H:%M:%S UTC"))' | jq '.'

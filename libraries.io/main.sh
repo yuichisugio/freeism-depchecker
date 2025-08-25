@@ -79,8 +79,6 @@ if [[ $# -gt 0 && ("$1" == "-h" || "$1" == "--help") ]]; then
   exit 0
 fi
 
-
-
 ########################################
 # 共通: JSON専用のHTTP GET (429/503はリトライ)
 ########################################
@@ -105,9 +103,7 @@ function http_get_json() {
 
     # Content-Type を取得（複数行ある場合もあるため最後を採用）
     ctype="$(
-      awk 'BEGIN{IGNORECASE=1}
-           /^content-type:/ {gsub(/\r/,""); sub(/^[^:]+:[[:space:]]*/,""); ct=$0}
-           END{print tolower(ct)}' "$headers"
+      awk 'BEGIN{IGNORECASE=1} /^content-type:/ {gsub(/\r/,""); sub(/^[^:]+:[[:space:]]*/,""); ct=$0} END{print tolower(ct)}' "$headers"
     )"
     retry_after="$(awk 'BEGIN{IGNORECASE=1} /^retry-after:/ {gsub(/\r/,""); print $2}' "$headers")"
 
@@ -246,10 +242,8 @@ function get_repo_info() {
 }
 
 ########################################
-# データ抽出
-########################################
-
 # リポジトリURLを {host, owner, repo} に分解する
+########################################
 function parse_repo_url() {
   local url="$1"
   jq -cn --arg u "$url" '
@@ -334,7 +328,7 @@ function parse_repo_url() {
           elif ($host|test("(^|\\.)bitbucket\\.[^/]+$")) then
             # Bitbucket Server (projects/<KEY>/repos/<slug>) 優先
             (parse_bitbucket_server($p) as $bb
-             | if $bb.repo != "" then $bb else parse_default($p) end)
+            | if $bb.repo != "" then $bb else parse_default($p) end)
           else
             parse_default($p)
           end
@@ -344,7 +338,7 @@ function parse_repo_url() {
 }
 
 ########################################
-# 共通: 進捗表示（同一行を上書き）
+# 共通: 進捗表示
 ########################################
 # 使い方: update_progress <done> <total>
 # - 端末(TTY)のときは同じ行を上書き（\r と \033[K を使用）
@@ -458,7 +452,7 @@ function process_raw_data() {
           homepage: ($info0.homepage // ""),
           package_manager_url: ($info0.package_manager_url // ""),
           repository_url: ($info0.repository_url // $info0.source_code_url // $info0.github_repo_url // $info0.homepage // "")
-        } 
+        }
         | $base + .                              # 解析した host/owner/repo に追加
       '
     )"

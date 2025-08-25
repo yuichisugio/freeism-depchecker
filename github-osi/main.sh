@@ -264,8 +264,8 @@ get_sbom_and_prep() {
 
         | .name_sys =
             (if .system=="MAVEN" then ($p.path | split("/") | [.[0], (.[1] // "")] | join(":"))
-             elif .system=="NPM" then ( if ($p.path | startswith("%40")) then ($p.path | sub("^%40"; "@")) else .name end )
-             else $p.path end)
+            elif .system=="NPM" then ( if ($p.path | startswith("%40")) then ($p.path | sub("^%40"; "@")) else .name end )
+            else $p.path end)
 
         | .name_enc = (if (.name_sys|type)=="string" then (.name_sys|@uri) else null end)
         | .system_lc = (if .system != null then (.system|ascii_downcase) else null end)
@@ -283,12 +283,21 @@ get_sbom_and_prep() {
 }
 
 ########################################
-# 依存 → リポジトリ解決（依存ごと=58件を出す）
+# 依存 → リポジトリ解決
 ########################################
 resolve_repos_per_dep() {
   : >"${LIBS_JSON}.tmp"
 
   while IFS= read -r dep; do
+
+    local name=""
+    local version_exact=""
+    local purl_type=""
+    local purl_path=""
+    local system_supported=""
+    local system_lc=""
+    local name_enc=""
+
     name="$(jq -r '.name' <<<"$dep")"
     version_exact="$(jq -r '.version_exact' <<<"$dep")"
     purl_type="$(jq -r '.purl_type' <<<"$dep")"
@@ -297,11 +306,11 @@ resolve_repos_per_dep() {
     system_lc="$(jq -r '.system_lc // empty' <<<"$dep")"
     name_enc="$(jq -r '.name_enc // empty' <<<"$dep")"
 
-    host=""
-    owner=""
-    repo=""
-    homepage=""
-    repo_url=""
+    local host=""
+    local owner=""
+    local repo=""
+    local homepage=""
+    local repo_url=""
 
     # A) purl が github / githubactions のときは機械的に owner/repo を抽出
     if [[ "$purl_type" == "github" || "$purl_type" == "githubactions" ]]; then
@@ -329,6 +338,7 @@ resolve_repos_per_dep() {
               elif ($lab|test("repo|source")) then $acc + {repository_url: $l.url}
               elif ($lab|test("npm|package|registry")) then $acc + {package_manager_url: $l.url}
               else $acc end);
+
         def proj_list:
           [ (.relatedProjects // [])[] | select(.relationType=="SOURCE_REPO") | .projectKey.id ];
 
@@ -414,7 +424,7 @@ resolve_repos_per_dep() {
 
   done <"${DEPS_JSONL}"
 
-  # “重複除去しない”で 58件をそのまま配列化（== 期待件数に一致）
+  # 重複除去しない
   jq -s '.' "${LIBS_JSON}.tmp" >"${LIBS_JSON}"
 }
 

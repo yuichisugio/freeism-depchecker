@@ -91,23 +91,21 @@ freeism-depchecker/
   			"Repository": "ccusage"
   		}
   	},
-  	"data": {
-  		"libraries": [
-  			{
-  				"host": "gitlab.com",
-  				"owner": "group",
-  				"repo": "lib-b"
-  			},
-  			{
-  				"host": "github.com",
-  				"owner": "acme",
-  				"repo": "lib-a",
-  				"package_manager_url": "pack-D",
-  				"homepage": "page-p",
-  				"repository_url": "git/e"
-  			}
-  		]
-  	}
+  	"data": [
+  		{
+  			"host": "gitlab.com",
+  			"owner": "group",
+  			"repo": "lib-b"
+  		},
+  		{
+  			"host": "github.com",
+  			"owner": "acme",
+  			"repo": "lib-a",
+  			"package_manager_url": "pack-D",
+  			"homepage": "page-p",
+  			"repository_url": "git/e"
+  		}
+  	]
   }
   ```
 

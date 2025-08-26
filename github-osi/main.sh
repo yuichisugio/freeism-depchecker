@@ -439,7 +439,7 @@ emit_output() {
     -n '
       {
         meta: { createdAt: $createdAt, "specified-oss": { owner: $owner, Repository: $repo } },
-        data: { libraries: $libs[0] }  # ← 依存（パッケージ）単位：重複除去なし
+        data: $libs[0]  # ← 依存（パッケージ）単位：重複除去なし
       }' >"${OUTPUT_JSON}"
 
   printf 'Wrote %s\n' "${OUTPUT_JSON}" >&2

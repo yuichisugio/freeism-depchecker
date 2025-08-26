@@ -458,7 +458,7 @@ function process_raw_data() {
     )"
     rm -f "$repo_tmp"
 
-    # 1行1オブジェクトで追記（NDJSON）
+    # 1行1オブジェクトで��記（NDJSON）
     printf '%s\n' "$combined" >>"$libs_ndjson"
 
     # 反復の最初にカウント進めて表示を更新 ===
@@ -504,7 +504,7 @@ function process_raw_data() {
         createdAt: $createdAt,
         "specified-oss": { owner: $owner, repository: $repo }
       },
-      data: { libraries: $libs }
+      data: $libs
     }'
   )"
 

@@ -100,7 +100,8 @@ jq -n \
   --slurpfile sb "${RAW_SBOM_JSON}" '
   # $sb[0] は取得した SBOM 全体
   # externalRefs[].referenceType == "purl" の referenceLocator を収集
-  ($sb[0].sbom.packages // [])                                   # パッケージ配列
+  # パッケージ配列
+  ($sb[0].sbom.packages // [])
   | [
       .[]
       | (.externalRefs // [])[]?
@@ -133,8 +134,8 @@ jq -n \
         createdAt: $createdAt,
         "specified-oss": { owner: $owner, Repository: $Repository }
       },
-      data: { libraries: . }
+      data: .
     }
-' | jq . >"${FORMATTED_JSON}"
+' | jq '.' >"${FORMATTED_JSON}"
 
 echo "OK: ${FORMATTED_JSON}"

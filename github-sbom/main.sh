@@ -35,14 +35,11 @@ Usage:
   $0 [OWNER] [REPO]
 
 Description:
-  「GitHubのDependency Graph」を用いて依存からソースリポジトリを解決します。
+  GitHub Dependency Graph SBOM から purl を抽出し、所定のJSON形式で出力します。
 
 Options:
-  -h, --help   ヘルプ
-  -r, --ratelimit レートリミット表示
-
-Output:
-  ${OUTPUT_JSON}
+  -h, --help       ヘルプ
+  -r, --ratelimit  レートリミット表示
 
 Examples:
   $0 ryoppippi ccusage
@@ -57,8 +54,7 @@ if [[ ("${1:-}" == "-r" || "${1:-}" == "--ratelimit") ]]; then
   gh api -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     /rate_limit |
-    jq '.resources.dependency_sbom
-          | .reset |= (strftime("%Y-%m-%d %H:%M:%S UTC"))'
+    jq '.resources.dependency_sbom | .reset |= (strftime("%Y-%m-%d %H:%M:%S UTC"))'
   exit 0
 fi
 
@@ -74,6 +70,8 @@ readonly REPO=${2:-"ccusage"}
 # タイムスタンプ
 # shellcheck disable=SC2155
 readonly TS="$(date +%Y%m%d_%H%M%S)"
+# shellcheck disable=SC2155
+readonly CREATED_AT="$(date +%Y-%m-%d_%H:%M:%S)Z"
 
 # 出力フォルダを作成
 readonly RESULTS_DIR="./results/${OWNER}_${REPO}"
@@ -81,7 +79,7 @@ mkdir -p "${RESULTS_DIR}/raw-data" "${RESULTS_DIR}/formatted-data"
 
 # 出力ファイル名を定義
 readonly RAW_SBOM_JSON="${RESULTS_DIR}/raw-data/raw_${TS}.json"
-readonly FORMATTED_JSON="${RESULTS_DIR}/formatted-data/output_${TS}.json"
+readonly FORMATTED_JSON="${RESULTS_DIR}/formatted-data/result_${TS}.json"
 
 #--------------------------------------
 # 1) SBOM の取得
@@ -93,44 +91,50 @@ gh api \
   jq '.' >"${RAW_SBOM_JSON}"
 
 #--------------------------------------
-# 2) purl 抽出
-#--------------------------------------
-mapfile -t PURL_RAW_ARR < <(
-  jq -r '
-    .sbom.packages[]
-    | (.externalRefs // [])
-    | map(select(.referenceType=="purl"))[]
-    | .referenceLocator
-    | sub("^pkg:"; "")
-    | @%5E/
-    | map(
-        capture("^(?<host>[^/]+)/(?<namever>.+)$")
-        | .repo = (
-            .namever
-            | if test("@[^@]+$") then
-                capture("^(?<name>.+)@(?<ver>[^@]+)$") | "\(.name)\(.ver)"
-              else .
-              end
-          )
-        | {host, repo}
-      )
-    | unique_by(.host + ":" + .repo)
-  ' "${RAW_SBOM_JSON}" | sort -u
-)
-
-#--------------------------------------
-# 3) 指定フォーマットで出力
+# 2) purl 抽出 & 期待フォーマットで出力
 #--------------------------------------
 jq -n \
-  --arg createdAt "${TS}" \
+  --arg createdAt "${CREATED_AT}" \
   --arg owner "${OWNER}" \
   --arg Repository "${REPO}" \
-  --argjson libraries "${PURL_RAW_ARR[@]}" '
-{
-  meta: {
-    createdAt: $createdAt,
-    "specified-oss": { owner: $owner, Repository: $Repository }
-  },
-  data: $libraries
-}
+  --slurpfile sb "${RAW_SBOM_JSON}" '
+  # $sb[0] は取得した SBOM 全体
+  # externalRefs[].referenceType == "purl" の referenceLocator を収集
+  ($sb[0].sbom.packages // [])                                   # パッケージ配列
+  | [
+      .[]
+      | (.externalRefs // [])[]?
+      | select(.referenceType == "purl")
+      | { purl: .referenceLocator
+        , loc:  (.referenceLocator | sub("^pkg:"; "") | split("?")[0])
+        }
+    ]
+  | map(
+      . as $item
+      | ($item.loc | split("/")) as $parts
+      | ($parts[0])     as $host
+      | ($parts[1:-1])  as $ns_parts
+      | ($parts[-1])    as $namever
+      | {
+          host: $host,
+          repo: (
+            ( $ns_parts + [ ( $namever | (if test("@") then split("@")[0] else . end)) ] )
+            | join("/")
+            | gsub("%40"; "@")
+          ),
+          purl: $item.purl
+        }
+    )
+  | unique_by(.host + ":" + .repo)
+
+  # 期待フォーマットに整形
+  | {
+      meta: {
+        createdAt: $createdAt,
+        "specified-oss": { owner: $owner, Repository: $Repository }
+      },
+      data: { libraries: . }
+    }
 ' | jq . >"${FORMATTED_JSON}"
+
+echo "OK: ${FORMATTED_JSON}"

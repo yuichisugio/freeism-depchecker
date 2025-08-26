@@ -65,7 +65,6 @@ fi
 #--------------------------------------
 # 引数の取得
 #--------------------------------------
-# 引数: OWNER / REPO
 readonly OWNER=${1:-"ryoppippi"}
 readonly REPO=${2:-"ccusage"}
 
@@ -82,7 +81,7 @@ mkdir -p "${RESULTS_DIR}/raw-data" "${RESULTS_DIR}/formatted-data"
 
 # 出力ファイル名を定義
 readonly RAW_SBOM_JSON="${RESULTS_DIR}/raw-data/raw_${TS}.json"
-readonly OUTPUT_JSON="${RESULTS_DIR}/formatted-data/output_${TS}.json"
+readonly FORMATTED_JSON="${RESULTS_DIR}/formatted-data/output_${TS}.json"
 
 #--------------------------------------
 # 1) SBOM の取得
@@ -94,7 +93,7 @@ gh api \
   jq '.' >"${RAW_SBOM_JSON}"
 
 #--------------------------------------
-# 2) purl 抽出（"pkg:" を除去）
+# 2) purl 抽出
 #--------------------------------------
 mapfile -t PURL_RAW_ARR < <(
   jq -r '
@@ -103,28 +102,7 @@ mapfile -t PURL_RAW_ARR < <(
     | map(select(.referenceType=="purl"))[]
     | .referenceLocator
     | sub("^pkg:"; "")
-  ' "${RAW_SBOM_JSON}" | sort -u
-)
-
-#--------------------------------------
-# 3) URLデコード
-#--------------------------------------
-DECODED_JSON="$(
-  printf '%s\n' "${PURL_RAW_ARR[@]}" |
-    while IFS= read -r line; do
-      printf '%b\n' "${line//+/ }"
-    done |
-    jq -Rcs 'split("\n") | map(select(length>0))'
-)"
-
-#--------------------------------------
-# 4) host / repo へ成形
-#    "npm/fs-fixture@^2.8.1" -> {host:"npm", repo:"fs-fixture^2.8.1"}
-#    "npm/@types/bun@^1.2.20" -> {host:"npm", repo:"@types/bun^1.2.20"}
-#--------------------------------------
-LIBS_JSON="$(
-  jq -r --argjson arr "${DECODED_JSON}" '
-    $arr
+    | @%5E/
     | map(
         capture("^(?<host>[^/]+)/(?<namever>.+)$")
         | .repo = (
@@ -137,22 +115,22 @@ LIBS_JSON="$(
         | {host, repo}
       )
     | unique_by(.host + ":" + .repo)
-  '
-)"
+  ' "${RAW_SBOM_JSON}" | sort -u
+)
 
 #--------------------------------------
-# 5) 期待フォーマットで出力（標準出力）
+# 3) 指定フォーマットで出力
 #--------------------------------------
 jq -n \
-  --arg createdAt "${CREATED_AT}" \
-  --arg owner "${OUTPUT_OWNER}" \
-  --arg Repository "${OUTPUT_REPO}" \
-  --argjson libraries "${LIBS_JSON}" '
+  --arg createdAt "${TS}" \
+  --arg owner "${OWNER}" \
+  --arg Repository "${REPO}" \
+  --argjson libraries "${PURL_RAW_ARR[@]}" '
 {
   meta: {
     createdAt: $createdAt,
     "specified-oss": { owner: $owner, Repository: $Repository }
   },
-  data: { libraries: $libraries }
+  data: $libraries
 }
-' | jq . >"${OUTPUT_JSON}"
+' | jq . >"${FORMATTED_JSON}"

@@ -12,7 +12,7 @@ readonly execute_file_path=("github-osi" "libraries.io")
 ########################################
 readonly OWNER="${1}"
 readonly REPO="${2}"
-readonly RESULTS_DIR="./results/${OWNER}_${REPO}"
+# readonly RESULTS_DIR="./results/${OWNER}_${REPO}"
 
 ### 実行
 set -euo pipefail

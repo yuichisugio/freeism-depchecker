@@ -1,0 +1,241 @@
+{
+  "meta": {
+    "createdAt": "2025-08-26_20:31:13Z",
+    "specified-oss": {
+      "owner": "ryoppippi",
+      "Repository": "ccusage"
+    }
+  },
+  "data": {
+    "libraries": [
+      {
+        "host": "github",
+        "repo": "ccusage"
+      },
+      {
+        "host": "githubactions",
+        "repo": "action-semantic-pull-request"
+      },
+      {
+        "host": "githubactions",
+        "repo": "checkout"
+      },
+      {
+        "host": "githubactions",
+        "repo": "setup-bun"
+      },
+      {
+        "host": "githubactions",
+        "repo": "setup-node"
+      },
+      {
+        "host": "githubactions",
+        "repo": "typos"
+      },
+      {
+        "host": "npm",
+        "repo": "ansi-escapes"
+      },
+      {
+        "host": "npm",
+        "repo": "bumpp"
+      },
+      {
+        "host": "npm",
+        "repo": "bun"
+      },
+      {
+        "host": "npm",
+        "repo": "byethrow"
+      },
+      {
+        "host": "npm",
+        "repo": "byethrow-mcp"
+      },
+      {
+        "host": "npm",
+        "repo": "clean-pkg-json"
+      },
+      {
+        "host": "npm",
+        "repo": "cli-table3"
+      },
+      {
+        "host": "npm",
+        "repo": "consola"
+      },
+      {
+        "host": "npm",
+        "repo": "es-toolkit"
+      },
+      {
+        "host": "npm",
+        "repo": "eslint"
+      },
+      {
+        "host": "npm",
+        "repo": "eslint-config"
+      },
+      {
+        "host": "npm",
+        "repo": "eslint-plugin-format"
+      },
+      {
+        "host": "npm",
+        "repo": "fast-sort"
+      },
+      {
+        "host": "npm",
+        "repo": "fs-fixture"
+      },
+      {
+        "host": "npm",
+        "repo": "get-stdin"
+      },
+      {
+        "host": "npm",
+        "repo": "gunshi"
+      },
+      {
+        "host": "npm",
+        "repo": "hono"
+      },
+      {
+        "host": "npm",
+        "repo": "lint-staged"
+      },
+      {
+        "host": "npm",
+        "repo": "lsmcp"
+      },
+      {
+        "host": "npm",
+        "repo": "mcp"
+      },
+      {
+        "host": "npm",
+        "repo": "nano-spawn"
+      },
+      {
+        "host": "npm",
+        "repo": "native-preview"
+      },
+      {
+        "host": "npm",
+        "repo": "node-server"
+      },
+      {
+        "host": "npm",
+        "repo": "p-limit"
+      },
+      {
+        "host": "npm",
+        "repo": "path-type"
+      },
+      {
+        "host": "npm",
+        "repo": "picocolors"
+      },
+      {
+        "host": "npm",
+        "repo": "pretty-ms"
+      },
+      {
+        "host": "npm",
+        "repo": "publint"
+      },
+      {
+        "host": "npm",
+        "repo": "runtime"
+      },
+      {
+        "host": "npm",
+        "repo": "ryoppippi__limo"
+      },
+      {
+        "host": "npm",
+        "repo": "sdk"
+      },
+      {
+        "host": "npm",
+        "repo": "sort-package-json"
+      },
+      {
+        "host": "npm",
+        "repo": "std__async"
+      },
+      {
+        "host": "npm",
+        "repo": "string-width"
+      },
+      {
+        "host": "npm",
+        "repo": "tinyglobby"
+      },
+      {
+        "host": "npm",
+        "repo": "tsdown"
+      },
+      {
+        "host": "npm",
+        "repo": "type-fest"
+      },
+      {
+        "host": "npm",
+        "repo": "typedoc"
+      },
+      {
+        "host": "npm",
+        "repo": "typedoc-plugin-markdown"
+      },
+      {
+        "host": "npm",
+        "repo": "typedoc-vitepress-theme"
+      },
+      {
+        "host": "npm",
+        "repo": "unplugin-macros"
+      },
+      {
+        "host": "npm",
+        "repo": "unplugin-unused"
+      },
+      {
+        "host": "npm",
+        "repo": "utils"
+      },
+      {
+        "host": "npm",
+        "repo": "vitepress"
+      },
+      {
+        "host": "npm",
+        "repo": "vitepress-plugin-group-icons"
+      },
+      {
+        "host": "npm",
+        "repo": "vitepress-plugin-llms"
+      },
+      {
+        "host": "npm",
+        "repo": "vitepress-plugin-mermaid"
+      },
+      {
+        "host": "npm",
+        "repo": "vitest"
+      },
+      {
+        "host": "npm",
+        "repo": "wrangler"
+      },
+      {
+        "host": "npm",
+        "repo": "xdg-basedir"
+      },
+      {
+        "host": "npm",
+        "repo": "zod"
+      }
+    ]
+  }
+}

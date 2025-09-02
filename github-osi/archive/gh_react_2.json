@@ -1,5 +1,0 @@
-{
-  "message": "Failed to generate SBOM: Request timed out.",
-  "documentation_url": "https://docs.github.com/rest/dependency-graph/sboms#export-a-software-bill-of-materials-sbom-for-a-repository",
-  "status": "500"
-}

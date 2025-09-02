@@ -1,0 +1,1571 @@
+{
+  "meta": {
+    "createdAt": "2025-08-26_20:45:08Z",
+    "specified-oss": {
+      "owner": "honojs",
+      "Repository": "hono"
+    }
+  },
+  "data": [
+    {
+      "host": "github",
+      "repo": "honojs/hono",
+      "purl": "pkg:github/honojs/hono@main"
+    },
+    {
+      "host": "githubactions",
+      "repo": "actions/checkout",
+      "purl": "pkg:githubactions/actions/checkout@4.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "actions/download-artifact",
+      "purl": "pkg:githubactions/actions/download-artifact@4.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "actions/github-script",
+      "purl": "pkg:githubactions/actions/github-script@7.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "actions/setup-node",
+      "purl": "pkg:githubactions/actions/setup-node@4.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "actions/stale",
+      "purl": "pkg:githubactions/actions/stale@8.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "actions/upload-artifact",
+      "purl": "pkg:githubactions/actions/upload-artifact@4.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "autofix-ci/action",
+      "purl": "pkg:githubactions/autofix-ci/action@1.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "codecov/codecov-action",
+      "purl": "pkg:githubactions/codecov/codecov-action@5.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "denoland/setup-deno",
+      "purl": "pkg:githubactions/denoland/setup-deno@2.%2A.%2A"
+    },
+    {
+      "host": "githubactions",
+      "repo": "oven-sh/setup-bun",
+      "purl": "pkg:githubactions/oven-sh/setup-bun@2.%2A.%2A"
+    },
+    {
+      "host": "npm",
+      "repo": "@cloudflare/workers-types",
+      "purl": "pkg:npm/%40cloudflare/workers-types@2.2.2"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild-kit/cjs-loader",
+      "purl": "pkg:npm/%40esbuild-kit/cjs-loader@2.4.2"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild-kit/core-utils",
+      "purl": "pkg:npm/%40esbuild-kit/core-utils@3.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild-kit/esm-loader",
+      "purl": "pkg:npm/%40esbuild-kit/esm-loader@2.5.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/android-arm",
+      "purl": "pkg:npm/%40esbuild/android-arm@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/android-arm64",
+      "purl": "pkg:npm/%40esbuild/android-arm64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/android-x64",
+      "purl": "pkg:npm/%40esbuild/android-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/darwin-arm64",
+      "purl": "pkg:npm/%40esbuild/darwin-arm64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/darwin-x64",
+      "purl": "pkg:npm/%40esbuild/darwin-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/freebsd-arm64",
+      "purl": "pkg:npm/%40esbuild/freebsd-arm64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/freebsd-x64",
+      "purl": "pkg:npm/%40esbuild/freebsd-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-arm",
+      "purl": "pkg:npm/%40esbuild/linux-arm@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-arm64",
+      "purl": "pkg:npm/%40esbuild/linux-arm64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-ia32",
+      "purl": "pkg:npm/%40esbuild/linux-ia32@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-loong64",
+      "purl": "pkg:npm/%40esbuild/linux-loong64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-mips64el",
+      "purl": "pkg:npm/%40esbuild/linux-mips64el@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-ppc64",
+      "purl": "pkg:npm/%40esbuild/linux-ppc64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-riscv64",
+      "purl": "pkg:npm/%40esbuild/linux-riscv64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-s390x",
+      "purl": "pkg:npm/%40esbuild/linux-s390x@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/linux-x64",
+      "purl": "pkg:npm/%40esbuild/linux-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/netbsd-x64",
+      "purl": "pkg:npm/%40esbuild/netbsd-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/openbsd-x64",
+      "purl": "pkg:npm/%40esbuild/openbsd-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/sunos-x64",
+      "purl": "pkg:npm/%40esbuild/sunos-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/win32-arm64",
+      "purl": "pkg:npm/%40esbuild/win32-arm64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/win32-ia32",
+      "purl": "pkg:npm/%40esbuild/win32-ia32@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@esbuild/win32-x64",
+      "purl": "pkg:npm/%40esbuild/win32-x64@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@hono/eslint-config",
+      "purl": "pkg:npm/%40hono/eslint-config@%5E2.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "@hono/node-server",
+      "purl": "pkg:npm/%40hono/node-server@%5E1.13.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@isaacs/cliui",
+      "purl": "pkg:npm/%40isaacs/cliui@8.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "@medley/router",
+      "purl": "pkg:npm/%40medley/router@0.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "@npmcli/agent",
+      "purl": "pkg:npm/%40npmcli/agent@2.2.2"
+    },
+    {
+      "host": "npm",
+      "repo": "@npmcli/fs",
+      "purl": "pkg:npm/%40npmcli/fs@3.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "@pkgjs/parseargs",
+      "purl": "pkg:npm/%40pkgjs/parseargs@0.11.0"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/accepts",
+      "purl": "pkg:npm/%40types/accepts@1.3.7"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/benchmark",
+      "purl": "pkg:npm/%40types/benchmark@2.1.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/body-parser",
+      "purl": "pkg:npm/%40types/body-parser@1.19.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/connect",
+      "purl": "pkg:npm/%40types/connect@3.4.38"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/content-disposition",
+      "purl": "pkg:npm/%40types/content-disposition@0.5.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/cookies",
+      "purl": "pkg:npm/%40types/cookies@0.9.0"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/express",
+      "purl": "pkg:npm/%40types/express@4.17.21"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/express-serve-static-core",
+      "purl": "pkg:npm/%40types/express-serve-static-core@4.19.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/glob",
+      "purl": "pkg:npm/%40types/glob@%5E9.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/http-assert",
+      "purl": "pkg:npm/%40types/http-assert@1.5.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/http-errors",
+      "purl": "pkg:npm/%40types/http-errors@2.0.4"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/jsdom",
+      "purl": "pkg:npm/%40types/jsdom@%5E21.1.7"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/keygrip",
+      "purl": "pkg:npm/%40types/keygrip@1.0.6"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/koa",
+      "purl": "pkg:npm/%40types/koa@2.15.0"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/koa-compose",
+      "purl": "pkg:npm/%40types/koa-compose@3.2.8"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/mime",
+      "purl": "pkg:npm/%40types/mime@1.3.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/node",
+      "purl": "pkg:npm/%40types/node@%5E24.3.0"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/prop-types",
+      "purl": "pkg:npm/%40types/prop-types@15.7.5"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/qs",
+      "purl": "pkg:npm/%40types/qs@6.9.15"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/range-parser",
+      "purl": "pkg:npm/%40types/range-parser@1.2.7"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/react",
+      "purl": "pkg:npm/%40types/react@18.0.15"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/react-dom",
+      "purl": "pkg:npm/%40types/react-dom@18.2.17"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/scheduler",
+      "purl": "pkg:npm/%40types/scheduler@0.16.2"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/send",
+      "purl": "pkg:npm/%40types/send@0.17.4"
+    },
+    {
+      "host": "npm",
+      "repo": "@types/serve-static",
+      "purl": "pkg:npm/%40types/serve-static@1.15.7"
+    },
+    {
+      "host": "npm",
+      "repo": "@typescript/native-preview",
+      "purl": "pkg:npm/%40typescript/native-preview@7.0.0-dev.20250523.1"
+    },
+    {
+      "host": "npm",
+      "repo": "@vitest/coverage-v8",
+      "purl": "pkg:npm/%40vitest/coverage-v8@%5E3.2.4"
+    },
+    {
+      "host": "npm",
+      "repo": "abbrev",
+      "purl": "pkg:npm/abbrev@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "accepts",
+      "purl": "pkg:npm/accepts@1.3.8"
+    },
+    {
+      "host": "npm",
+      "repo": "agent-base",
+      "purl": "pkg:npm/agent-base@7.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "aggregate-error",
+      "purl": "pkg:npm/aggregate-error@3.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "ansi-regex",
+      "purl": "pkg:npm/ansi-regex@6.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "ansi-styles",
+      "purl": "pkg:npm/ansi-styles@6.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "anymatch",
+      "purl": "pkg:npm/anymatch@3.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "arg",
+      "purl": "pkg:npm/arg@%5E5.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "array-flatten",
+      "purl": "pkg:npm/array-flatten@1.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "balanced-match",
+      "purl": "pkg:npm/balanced-match@1.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "benchmark",
+      "purl": "pkg:npm/benchmark@2.1.4"
+    },
+    {
+      "host": "npm",
+      "repo": "binary-extensions",
+      "purl": "pkg:npm/binary-extensions@2.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "body-parser",
+      "purl": "pkg:npm/body-parser@1.20.0"
+    },
+    {
+      "host": "npm",
+      "repo": "boolbase",
+      "purl": "pkg:npm/boolbase@1.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "brace-expansion",
+      "purl": "pkg:npm/brace-expansion@2.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "braces",
+      "purl": "pkg:npm/braces@3.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "buffer-from",
+      "purl": "pkg:npm/buffer-from@1.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "bun-types",
+      "purl": "pkg:npm/bun-types@%5E1.2.20"
+    },
+    {
+      "host": "npm",
+      "repo": "bytes",
+      "purl": "pkg:npm/bytes@3.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "cacache",
+      "purl": "pkg:npm/cacache@18.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "call-bind",
+      "purl": "pkg:npm/call-bind@1.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "chokidar",
+      "purl": "pkg:npm/chokidar@3.5.3"
+    },
+    {
+      "host": "npm",
+      "repo": "chownr",
+      "purl": "pkg:npm/chownr@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "clean-stack",
+      "purl": "pkg:npm/clean-stack@2.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "color-convert",
+      "purl": "pkg:npm/color-convert@2.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "color-name",
+      "purl": "pkg:npm/color-name@1.1.4"
+    },
+    {
+      "host": "npm",
+      "repo": "content-disposition",
+      "purl": "pkg:npm/content-disposition@0.5.4"
+    },
+    {
+      "host": "npm",
+      "repo": "content-type",
+      "purl": "pkg:npm/content-type@1.0.4"
+    },
+    {
+      "host": "npm",
+      "repo": "cookie",
+      "purl": "pkg:npm/cookie@0.5.0"
+    },
+    {
+      "host": "npm",
+      "repo": "cookie-signature",
+      "purl": "pkg:npm/cookie-signature@1.0.6"
+    },
+    {
+      "host": "npm",
+      "repo": "cross-spawn",
+      "purl": "pkg:npm/cross-spawn@7.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "css-select",
+      "purl": "pkg:npm/css-select@5.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "css-what",
+      "purl": "pkg:npm/css-what@6.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "css.escape",
+      "purl": "pkg:npm/css.escape@1.5.1"
+    },
+    {
+      "host": "npm",
+      "repo": "csstype",
+      "purl": "pkg:npm/csstype@3.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "data-uri-to-buffer",
+      "purl": "pkg:npm/data-uri-to-buffer@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "debug",
+      "purl": "pkg:npm/debug@2.6.9"
+    },
+    {
+      "host": "npm",
+      "repo": "define-data-property",
+      "purl": "pkg:npm/define-data-property@1.1.4"
+    },
+    {
+      "host": "npm",
+      "repo": "depd",
+      "purl": "pkg:npm/depd@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "destroy",
+      "purl": "pkg:npm/destroy@1.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "dom-serializer",
+      "purl": "pkg:npm/dom-serializer@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "domelementtype",
+      "purl": "pkg:npm/domelementtype@2.3.0"
+    },
+    {
+      "host": "npm",
+      "repo": "domhandler",
+      "purl": "pkg:npm/domhandler@5.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "domutils",
+      "purl": "pkg:npm/domutils@3.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "eastasianwidth",
+      "purl": "pkg:npm/eastasianwidth@0.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "edge-mock",
+      "purl": "pkg:npm/edge-mock@0.0.15"
+    },
+    {
+      "host": "npm",
+      "repo": "editorconfig-checker",
+      "purl": "pkg:npm/editorconfig-checker@%5E6.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "ee-first",
+      "purl": "pkg:npm/ee-first@1.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "emoji-regex",
+      "purl": "pkg:npm/emoji-regex@8.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "encodeurl",
+      "purl": "pkg:npm/encodeurl@1.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "encoding",
+      "purl": "pkg:npm/encoding@0.1.13"
+    },
+    {
+      "host": "npm",
+      "repo": "entities",
+      "purl": "pkg:npm/entities@4.5.0"
+    },
+    {
+      "host": "npm",
+      "repo": "env-paths",
+      "purl": "pkg:npm/env-paths@2.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "err-code",
+      "purl": "pkg:npm/err-code@2.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "es-define-property",
+      "purl": "pkg:npm/es-define-property@1.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "es-errors",
+      "purl": "pkg:npm/es-errors@1.3.0"
+    },
+    {
+      "host": "npm",
+      "repo": "esbuild",
+      "purl": "pkg:npm/esbuild@0.19.8"
+    },
+    {
+      "host": "npm",
+      "repo": "escape-html",
+      "purl": "pkg:npm/escape-html@1.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "eslint",
+      "purl": "pkg:npm/eslint@%5E9.10.0"
+    },
+    {
+      "host": "npm",
+      "repo": "etag",
+      "purl": "pkg:npm/etag@1.8.1"
+    },
+    {
+      "host": "npm",
+      "repo": "exponential-backoff",
+      "purl": "pkg:npm/exponential-backoff@3.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "express",
+      "purl": "pkg:npm/express@4.18.1"
+    },
+    {
+      "host": "npm",
+      "repo": "fast-decode-uri-component",
+      "purl": "pkg:npm/fast-decode-uri-component@1.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "fast-deep-equal",
+      "purl": "pkg:npm/fast-deep-equal@3.1.3"
+    },
+    {
+      "host": "npm",
+      "repo": "fast-querystring",
+      "purl": "pkg:npm/fast-querystring@1.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "fetch-blob",
+      "purl": "pkg:npm/fetch-blob@3.1.5"
+    },
+    {
+      "host": "npm",
+      "repo": "fill-range",
+      "purl": "pkg:npm/fill-range@7.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "finalhandler",
+      "purl": "pkg:npm/finalhandler@1.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "find-my-way",
+      "purl": "pkg:npm/find-my-way@8.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "foreground-child",
+      "purl": "pkg:npm/foreground-child@3.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "formdata-polyfill",
+      "purl": "pkg:npm/formdata-polyfill@4.0.10"
+    },
+    {
+      "host": "npm",
+      "repo": "forwarded",
+      "purl": "pkg:npm/forwarded@0.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "fresh",
+      "purl": "pkg:npm/fresh@0.5.2"
+    },
+    {
+      "host": "npm",
+      "repo": "fs-minipass",
+      "purl": "pkg:npm/fs-minipass@3.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "fsevents",
+      "purl": "pkg:npm/fsevents@2.3.2"
+    },
+    {
+      "host": "npm",
+      "repo": "function-bind",
+      "purl": "pkg:npm/function-bind@1.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "get-intrinsic",
+      "purl": "pkg:npm/get-intrinsic@1.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "get-tsconfig",
+      "purl": "pkg:npm/get-tsconfig@4.7.5"
+    },
+    {
+      "host": "npm",
+      "repo": "glob",
+      "purl": "pkg:npm/glob@%5E11.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "glob-parent",
+      "purl": "pkg:npm/glob-parent@5.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "gopd",
+      "purl": "pkg:npm/gopd@1.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "graceful-fs",
+      "purl": "pkg:npm/graceful-fs@4.2.11"
+    },
+    {
+      "host": "npm",
+      "repo": "happy-dom",
+      "purl": "pkg:npm/happy-dom@12.10.3"
+    },
+    {
+      "host": "npm",
+      "repo": "has",
+      "purl": "pkg:npm/has@1.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "has-property-descriptors",
+      "purl": "pkg:npm/has-property-descriptors@1.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "has-proto",
+      "purl": "pkg:npm/has-proto@1.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "has-symbols",
+      "purl": "pkg:npm/has-symbols@1.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "hasown",
+      "purl": "pkg:npm/hasown@2.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "he",
+      "purl": "pkg:npm/he@1.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "hono",
+      "purl": "pkg:npm/hono@3.10.4"
+    },
+    {
+      "host": "npm",
+      "repo": "http-cache-semantics",
+      "purl": "pkg:npm/http-cache-semantics@4.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "http-errors",
+      "purl": "pkg:npm/http-errors@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "http-proxy-agent",
+      "purl": "pkg:npm/http-proxy-agent@7.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "https-proxy-agent",
+      "purl": "pkg:npm/https-proxy-agent@7.0.5"
+    },
+    {
+      "host": "npm",
+      "repo": "iconv-lite",
+      "purl": "pkg:npm/iconv-lite@0.6.3"
+    },
+    {
+      "host": "npm",
+      "repo": "imurmurhash",
+      "purl": "pkg:npm/imurmurhash@0.1.4"
+    },
+    {
+      "host": "npm",
+      "repo": "indent-string",
+      "purl": "pkg:npm/indent-string@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "inherits",
+      "purl": "pkg:npm/inherits@2.0.4"
+    },
+    {
+      "host": "npm",
+      "repo": "ip-address",
+      "purl": "pkg:npm/ip-address@9.0.5"
+    },
+    {
+      "host": "npm",
+      "repo": "ipaddr.js",
+      "purl": "pkg:npm/ipaddr.js@1.9.1"
+    },
+    {
+      "host": "npm",
+      "repo": "is-binary-path",
+      "purl": "pkg:npm/is-binary-path@2.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "is-extglob",
+      "purl": "pkg:npm/is-extglob@2.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "is-fullwidth-code-point",
+      "purl": "pkg:npm/is-fullwidth-code-point@3.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "is-glob",
+      "purl": "pkg:npm/is-glob@4.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "is-lambda",
+      "purl": "pkg:npm/is-lambda@1.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "is-number",
+      "purl": "pkg:npm/is-number@7.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "isexe",
+      "purl": "pkg:npm/isexe@3.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "itty-router",
+      "purl": "pkg:npm/itty-router@%5E2.6.1"
+    },
+    {
+      "host": "npm",
+      "repo": "jackspeak",
+      "purl": "pkg:npm/jackspeak@3.4.1"
+    },
+    {
+      "host": "npm",
+      "repo": "js-tokens",
+      "purl": "pkg:npm/js-tokens@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "jsbn",
+      "purl": "pkg:npm/jsbn@1.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "jsdom",
+      "purl": "pkg:npm/jsdom@22.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "koa-compose",
+      "purl": "pkg:npm/koa-compose@4.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "koa-router",
+      "purl": "pkg:npm/koa-router@12.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "koa-tree-router",
+      "purl": "pkg:npm/koa-tree-router@0.12.1"
+    },
+    {
+      "host": "npm",
+      "repo": "livereload",
+      "purl": "pkg:npm/livereload@0.9.3"
+    },
+    {
+      "host": "npm",
+      "repo": "livereload-js",
+      "purl": "pkg:npm/livereload-js@3.4.0"
+    },
+    {
+      "host": "npm",
+      "repo": "lodash",
+      "purl": "pkg:npm/lodash@4.17.21"
+    },
+    {
+      "host": "npm",
+      "repo": "loose-envify",
+      "purl": "pkg:npm/loose-envify@1.4.0"
+    },
+    {
+      "host": "npm",
+      "repo": "lru-cache",
+      "purl": "pkg:npm/lru-cache@10.3.1"
+    },
+    {
+      "host": "npm",
+      "repo": "make-fetch-happen",
+      "purl": "pkg:npm/make-fetch-happen@13.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "media-typer",
+      "purl": "pkg:npm/media-typer@0.3.0"
+    },
+    {
+      "host": "npm",
+      "repo": "memoirist",
+      "purl": "pkg:npm/memoirist@0.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "merge-descriptors",
+      "purl": "pkg:npm/merge-descriptors@1.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "methods",
+      "purl": "pkg:npm/methods@1.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "mime",
+      "purl": "pkg:npm/mime@1.6.0"
+    },
+    {
+      "host": "npm",
+      "repo": "mime-db",
+      "purl": "pkg:npm/mime-db@1.52.0"
+    },
+    {
+      "host": "npm",
+      "repo": "mime-types",
+      "purl": "pkg:npm/mime-types@2.1.35"
+    },
+    {
+      "host": "npm",
+      "repo": "minimatch",
+      "purl": "pkg:npm/minimatch@9.0.5"
+    },
+    {
+      "host": "npm",
+      "repo": "minipass",
+      "purl": "pkg:npm/minipass@7.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "minipass-collect",
+      "purl": "pkg:npm/minipass-collect@2.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "minipass-fetch",
+      "purl": "pkg:npm/minipass-fetch@3.0.5"
+    },
+    {
+      "host": "npm",
+      "repo": "minipass-flush",
+      "purl": "pkg:npm/minipass-flush@1.0.5"
+    },
+    {
+      "host": "npm",
+      "repo": "minipass-pipeline",
+      "purl": "pkg:npm/minipass-pipeline@1.2.4"
+    },
+    {
+      "host": "npm",
+      "repo": "minipass-sized",
+      "purl": "pkg:npm/minipass-sized@1.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "minizlib",
+      "purl": "pkg:npm/minizlib@2.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "mitata",
+      "purl": "pkg:npm/mitata@%5E0.1.11"
+    },
+    {
+      "host": "npm",
+      "repo": "mkdirp",
+      "purl": "pkg:npm/mkdirp@1.0.4"
+    },
+    {
+      "host": "npm",
+      "repo": "ms",
+      "purl": "pkg:npm/ms@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "msw",
+      "purl": "pkg:npm/msw@%5E2.6.0"
+    },
+    {
+      "host": "npm",
+      "repo": "nano-jsx",
+      "purl": "pkg:npm/nano-jsx@0.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "negotiator",
+      "purl": "pkg:npm/negotiator@0.6.3"
+    },
+    {
+      "host": "npm",
+      "repo": "node-domexception",
+      "purl": "pkg:npm/node-domexception@1.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "node-fetch",
+      "purl": "pkg:npm/node-fetch@2.6.7"
+    },
+    {
+      "host": "npm",
+      "repo": "node-gyp",
+      "purl": "pkg:npm/node-gyp@10.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "node-html-parser",
+      "purl": "pkg:npm/node-html-parser@6.1.11"
+    },
+    {
+      "host": "npm",
+      "repo": "nopt",
+      "purl": "pkg:npm/nopt@7.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "normalize-path",
+      "purl": "pkg:npm/normalize-path@3.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "np",
+      "purl": "pkg:npm/np@10.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "nth-check",
+      "purl": "pkg:npm/nth-check@2.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "object-inspect",
+      "purl": "pkg:npm/object-inspect@1.12.2"
+    },
+    {
+      "host": "npm",
+      "repo": "object-treeify",
+      "purl": "pkg:npm/object-treeify@1.1.33"
+    },
+    {
+      "host": "npm",
+      "repo": "on-finished",
+      "purl": "pkg:npm/on-finished@2.4.1"
+    },
+    {
+      "host": "npm",
+      "repo": "opts",
+      "purl": "pkg:npm/opts@2.0.2"
+    },
+    {
+      "host": "npm",
+      "repo": "p-map",
+      "purl": "pkg:npm/p-map@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "package-json-from-dist",
+      "purl": "pkg:npm/package-json-from-dist@1.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "parseurl",
+      "purl": "pkg:npm/parseurl@1.3.3"
+    },
+    {
+      "host": "npm",
+      "repo": "path-key",
+      "purl": "pkg:npm/path-key@3.1.1"
+    },
+    {
+      "host": "npm",
+      "repo": "path-scurry",
+      "purl": "pkg:npm/path-scurry@1.11.1"
+    },
+    {
+      "host": "npm",
+      "repo": "path-to-regexp",
+      "purl": "pkg:npm/path-to-regexp@6.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "picomatch",
+      "purl": "pkg:npm/picomatch@2.3.1"
+    },
+    {
+      "host": "npm",
+      "repo": "pkg-pr-new",
+      "purl": "pkg:npm/pkg-pr-new@%5E0.0.53"
+    },
+    {
+      "host": "npm",
+      "repo": "platform",
+      "purl": "pkg:npm/platform@1.3.6"
+    },
+    {
+      "host": "npm",
+      "repo": "preact",
+      "purl": "pkg:npm/preact@10.19.2"
+    },
+    {
+      "host": "npm",
+      "repo": "preact-render-to-string",
+      "purl": "pkg:npm/preact-render-to-string@6.3.1"
+    },
+    {
+      "host": "npm",
+      "repo": "prettier",
+      "purl": "pkg:npm/prettier@%5E2.6.2"
+    },
+    {
+      "host": "npm",
+      "repo": "pretty-format",
+      "purl": "pkg:npm/pretty-format@3.8.0"
+    },
+    {
+      "host": "npm",
+      "repo": "proc-log",
+      "purl": "pkg:npm/proc-log@4.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "promise-retry",
+      "purl": "pkg:npm/promise-retry@2.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "proxy-addr",
+      "purl": "pkg:npm/proxy-addr@2.0.7"
+    },
+    {
+      "host": "npm",
+      "repo": "publint",
+      "purl": "pkg:npm/publint@%5E0.1.16"
+    },
+    {
+      "host": "npm",
+      "repo": "qs",
+      "purl": "pkg:npm/qs@6.10.3"
+    },
+    {
+      "host": "npm",
+      "repo": "radix3",
+      "purl": "pkg:npm/radix3@1.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "range-parser",
+      "purl": "pkg:npm/range-parser@1.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "raw-body",
+      "purl": "pkg:npm/raw-body@2.5.1"
+    },
+    {
+      "host": "npm",
+      "repo": "react",
+      "purl": "pkg:npm/react@18.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "react-dom",
+      "purl": "pkg:npm/react-dom@18.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "readdirp",
+      "purl": "pkg:npm/readdirp@3.6.0"
+    },
+    {
+      "host": "npm",
+      "repo": "regexparam",
+      "purl": "pkg:npm/regexparam@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "resolve-pkg-maps",
+      "purl": "pkg:npm/resolve-pkg-maps@1.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "ret",
+      "purl": "pkg:npm/ret@0.4.3"
+    },
+    {
+      "host": "npm",
+      "repo": "retry",
+      "purl": "pkg:npm/retry@0.12.0"
+    },
+    {
+      "host": "npm",
+      "repo": "rou3",
+      "purl": "pkg:npm/rou3@0.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "safe-buffer",
+      "purl": "pkg:npm/safe-buffer@5.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "safe-regex2",
+      "purl": "pkg:npm/safe-regex2@3.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "safer-buffer",
+      "purl": "pkg:npm/safer-buffer@2.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "scheduler",
+      "purl": "pkg:npm/scheduler@0.23.0"
+    },
+    {
+      "host": "npm",
+      "repo": "secure-json-parse",
+      "purl": "pkg:npm/secure-json-parse@2.4.0"
+    },
+    {
+      "host": "npm",
+      "repo": "semver",
+      "purl": "pkg:npm/semver@7.6.2"
+    },
+    {
+      "host": "npm",
+      "repo": "send",
+      "purl": "pkg:npm/send@0.18.0"
+    },
+    {
+      "host": "npm",
+      "repo": "serve-static",
+      "purl": "pkg:npm/serve-static@1.15.0"
+    },
+    {
+      "host": "npm",
+      "repo": "set-function-length",
+      "purl": "pkg:npm/set-function-length@1.2.2"
+    },
+    {
+      "host": "npm",
+      "repo": "setprototypeof",
+      "purl": "pkg:npm/setprototypeof@1.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "shebang-command",
+      "purl": "pkg:npm/shebang-command@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "shebang-regex",
+      "purl": "pkg:npm/shebang-regex@3.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "side-channel",
+      "purl": "pkg:npm/side-channel@1.0.4"
+    },
+    {
+      "host": "npm",
+      "repo": "signal-exit",
+      "purl": "pkg:npm/signal-exit@4.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "smart-buffer",
+      "purl": "pkg:npm/smart-buffer@4.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "socks",
+      "purl": "pkg:npm/socks@2.8.3"
+    },
+    {
+      "host": "npm",
+      "repo": "socks-proxy-agent",
+      "purl": "pkg:npm/socks-proxy-agent@8.0.4"
+    },
+    {
+      "host": "npm",
+      "repo": "source-map",
+      "purl": "pkg:npm/source-map@0.6.1"
+    },
+    {
+      "host": "npm",
+      "repo": "source-map-support",
+      "purl": "pkg:npm/source-map-support@0.5.21"
+    },
+    {
+      "host": "npm",
+      "repo": "sprintf-js",
+      "purl": "pkg:npm/sprintf-js@1.1.3"
+    },
+    {
+      "host": "npm",
+      "repo": "ssri",
+      "purl": "pkg:npm/ssri@10.0.6"
+    },
+    {
+      "host": "npm",
+      "repo": "statuses",
+      "purl": "pkg:npm/statuses@2.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "string-width",
+      "purl": "pkg:npm/string-width@5.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "string-width-cjs",
+      "purl": "pkg:npm/string-width-cjs@4.2.3"
+    },
+    {
+      "host": "npm",
+      "repo": "strip-ansi",
+      "purl": "pkg:npm/strip-ansi@7.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "strip-ansi-cjs",
+      "purl": "pkg:npm/strip-ansi-cjs@6.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "sunder",
+      "purl": "pkg:npm/sunder@%5E0.10.1"
+    },
+    {
+      "host": "npm",
+      "repo": "tar",
+      "purl": "pkg:npm/tar@6.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "tiny-request-router",
+      "purl": "pkg:npm/tiny-request-router@1.2.2"
+    },
+    {
+      "host": "npm",
+      "repo": "to-regex-range",
+      "purl": "pkg:npm/to-regex-range@5.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "toidentifier",
+      "purl": "pkg:npm/toidentifier@1.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "tr46",
+      "purl": "pkg:npm/tr46@0.0.3"
+    },
+    {
+      "host": "npm",
+      "repo": "trek-router",
+      "purl": "pkg:npm/trek-router@1.2.0"
+    },
+    {
+      "host": "npm",
+      "repo": "tsx",
+      "purl": "pkg:npm/tsx@3.14.0"
+    },
+    {
+      "host": "npm",
+      "repo": "type-is",
+      "purl": "pkg:npm/type-is@1.6.18"
+    },
+    {
+      "host": "npm",
+      "repo": "typescript",
+      "purl": "pkg:npm/typescript@5.3.2"
+    },
+    {
+      "host": "npm",
+      "repo": "undici",
+      "purl": "pkg:npm/undici@%5E6.21.3"
+    },
+    {
+      "host": "npm",
+      "repo": "undici-types",
+      "purl": "pkg:npm/undici-types@5.26.5"
+    },
+    {
+      "host": "npm",
+      "repo": "unique-filename",
+      "purl": "pkg:npm/unique-filename@3.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "unique-slug",
+      "purl": "pkg:npm/unique-slug@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "unpipe",
+      "purl": "pkg:npm/unpipe@1.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "utils-merge",
+      "purl": "pkg:npm/utils-merge@1.0.1"
+    },
+    {
+      "host": "npm",
+      "repo": "vary",
+      "purl": "pkg:npm/vary@1.1.2"
+    },
+    {
+      "host": "npm",
+      "repo": "vite-plugin-fastly-js-compute",
+      "purl": "pkg:npm/vite-plugin-fastly-js-compute@%5E0.4.2"
+    },
+    {
+      "host": "npm",
+      "repo": "vitest",
+      "purl": "pkg:npm/vitest@%5E3.2.4"
+    },
+    {
+      "host": "npm",
+      "repo": "web-streams-polyfill",
+      "purl": "pkg:npm/web-streams-polyfill@3.2.1"
+    },
+    {
+      "host": "npm",
+      "repo": "webidl-conversions",
+      "purl": "pkg:npm/webidl-conversions@7.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "whatwg-encoding",
+      "purl": "pkg:npm/whatwg-encoding@2.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "whatwg-mimetype",
+      "purl": "pkg:npm/whatwg-mimetype@3.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "whatwg-url",
+      "purl": "pkg:npm/whatwg-url@5.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "which",
+      "purl": "pkg:npm/which@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "worktop",
+      "purl": "pkg:npm/worktop@0.7.3"
+    },
+    {
+      "host": "npm",
+      "repo": "wrangler",
+      "purl": "pkg:npm/wrangler@4.12.0"
+    },
+    {
+      "host": "npm",
+      "repo": "wrap-ansi",
+      "purl": "pkg:npm/wrap-ansi@8.1.0"
+    },
+    {
+      "host": "npm",
+      "repo": "wrap-ansi-cjs",
+      "purl": "pkg:npm/wrap-ansi-cjs@7.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "ws",
+      "purl": "pkg:npm/ws@%5E8.18.0"
+    },
+    {
+      "host": "npm",
+      "repo": "yallist",
+      "purl": "pkg:npm/yallist@4.0.0"
+    },
+    {
+      "host": "npm",
+      "repo": "zod",
+      "purl": "pkg:npm/zod@%5E3.23.8"
+    }
+  ]
+}

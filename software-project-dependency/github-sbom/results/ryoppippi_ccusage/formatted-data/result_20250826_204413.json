@@ -1,0 +1,296 @@
+{
+	"meta": {
+		"createdAt": "2025-08-26_20:44:13Z",
+		"specified-oss": {
+			"owner": "ryoppippi",
+			"Repository": "ccusage"
+		}
+	},
+	"data": [
+		{
+			"host": "github",
+			"repo": "ryoppippi/ccusage",
+			"purl": "pkg:github/ryoppippi/ccusage@main"
+		},
+		{
+			"host": "githubactions",
+			"repo": "actions/checkout",
+			"purl": "pkg:githubactions/actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8"
+		},
+		{
+			"host": "githubactions",
+			"repo": "actions/setup-node",
+			"purl": "pkg:githubactions/actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
+		},
+		{
+			"host": "githubactions",
+			"repo": "amannn/action-semantic-pull-request",
+			"purl": "pkg:githubactions/amannn/action-semantic-pull-request@7f33ba792281b034f64e96f4c0b5496782dd3b37"
+		},
+		{
+			"host": "githubactions",
+			"repo": "crate-ci/typos",
+			"purl": "pkg:githubactions/crate-ci/typos@master"
+		},
+		{
+			"host": "githubactions",
+			"repo": "oven-sh/setup-bun",
+			"purl": "pkg:githubactions/oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76"
+		},
+		{
+			"host": "npm",
+			"repo": "@antfu/utils",
+			"purl": "pkg:npm/%40antfu/utils@%5E9.2.0"
+		},
+		{
+			"host": "npm",
+			"repo": "@hono/mcp",
+			"purl": "pkg:npm/%40hono/mcp@%5E0.1.0"
+		},
+		{
+			"host": "npm",
+			"repo": "@hono/node-server",
+			"purl": "pkg:npm/%40hono/node-server@%5E1.19.0"
+		},
+		{
+			"host": "npm",
+			"repo": "@jsr/ryoppippi__limo",
+			"purl": "pkg:npm/%40jsr/ryoppippi__limo@%5E0.2.2"
+		},
+		{
+			"host": "npm",
+			"repo": "@jsr/std__async",
+			"purl": "pkg:npm/%40jsr/std__async@%5E1.0.14"
+		},
+		{
+			"host": "npm",
+			"repo": "@mizchi/lsmcp",
+			"purl": "pkg:npm/%40mizchi/lsmcp@%5E0.10.0"
+		},
+		{
+			"host": "npm",
+			"repo": "@modelcontextprotocol/sdk",
+			"purl": "pkg:npm/%40modelcontextprotocol/sdk@%5E1.17.3"
+		},
+		{
+			"host": "npm",
+			"repo": "@oxc-project/runtime",
+			"purl": "pkg:npm/%40oxc-project/runtime@%5E0.82.3"
+		},
+		{
+			"host": "npm",
+			"repo": "@praha/byethrow",
+			"purl": "pkg:npm/%40praha/byethrow@%5E0.6.3"
+		},
+		{
+			"host": "npm",
+			"repo": "@praha/byethrow-mcp",
+			"purl": "pkg:npm/%40praha/byethrow-mcp@%5E0.1.2"
+		},
+		{
+			"host": "npm",
+			"repo": "@ryoppippi/eslint-config",
+			"purl": "pkg:npm/%40ryoppippi/eslint-config@%5E0.3.7"
+		},
+		{
+			"host": "npm",
+			"repo": "@types/bun",
+			"purl": "pkg:npm/%40types/bun@%5E1.2.20"
+		},
+		{
+			"host": "npm",
+			"repo": "@typescript/native-preview",
+			"purl": "pkg:npm/%40typescript/native-preview@%5E7.0.0-dev.20250821.1"
+		},
+		{
+			"host": "npm",
+			"repo": "ansi-escapes",
+			"purl": "pkg:npm/ansi-escapes@%5E7.0.0"
+		},
+		{
+			"host": "npm",
+			"repo": "bumpp",
+			"purl": "pkg:npm/bumpp@%5E10.2.3"
+		},
+		{
+			"host": "npm",
+			"repo": "clean-pkg-json",
+			"purl": "pkg:npm/clean-pkg-json@%5E1.3.0"
+		},
+		{
+			"host": "npm",
+			"repo": "cli-table3",
+			"purl": "pkg:npm/cli-table3@%5E0.6.5"
+		},
+		{
+			"host": "npm",
+			"repo": "consola",
+			"purl": "pkg:npm/consola@%5E3.4.2"
+		},
+		{
+			"host": "npm",
+			"repo": "es-toolkit",
+			"purl": "pkg:npm/es-toolkit@%5E1.39.10"
+		},
+		{
+			"host": "npm",
+			"repo": "eslint",
+			"purl": "pkg:npm/eslint@%5E9.33.0"
+		},
+		{
+			"host": "npm",
+			"repo": "eslint-plugin-format",
+			"purl": "pkg:npm/eslint-plugin-format@%5E1.0.1"
+		},
+		{
+			"host": "npm",
+			"repo": "fast-sort",
+			"purl": "pkg:npm/fast-sort@%5E3.4.1"
+		},
+		{
+			"host": "npm",
+			"repo": "fs-fixture",
+			"purl": "pkg:npm/fs-fixture@%5E2.8.1"
+		},
+		{
+			"host": "npm",
+			"repo": "get-stdin",
+			"purl": "pkg:npm/get-stdin@%5E9.0.0"
+		},
+		{
+			"host": "npm",
+			"repo": "gunshi",
+			"purl": "pkg:npm/gunshi@%5E0.26.3"
+		},
+		{
+			"host": "npm",
+			"repo": "hono",
+			"purl": "pkg:npm/hono@%5E4.9.2"
+		},
+		{
+			"host": "npm",
+			"repo": "lint-staged",
+			"purl": "pkg:npm/lint-staged@%5E16.1.5"
+		},
+		{
+			"host": "npm",
+			"repo": "nano-spawn",
+			"purl": "pkg:npm/nano-spawn@%5E1.0.2"
+		},
+		{
+			"host": "npm",
+			"repo": "p-limit",
+			"purl": "pkg:npm/p-limit@%5E7.1.0"
+		},
+		{
+			"host": "npm",
+			"repo": "path-type",
+			"purl": "pkg:npm/path-type@%5E6.0.0"
+		},
+		{
+			"host": "npm",
+			"repo": "picocolors",
+			"purl": "pkg:npm/picocolors@%5E1.1.1"
+		},
+		{
+			"host": "npm",
+			"repo": "pretty-ms",
+			"purl": "pkg:npm/pretty-ms@%5E9.2.0"
+		},
+		{
+			"host": "npm",
+			"repo": "publint",
+			"purl": "pkg:npm/publint@%5E0.3.12"
+		},
+		{
+			"host": "npm",
+			"repo": "sort-package-json",
+			"purl": "pkg:npm/sort-package-json@%5E3.4.0"
+		},
+		{
+			"host": "npm",
+			"repo": "string-width",
+			"purl": "pkg:npm/string-width@%5E7.2.0"
+		},
+		{
+			"host": "npm",
+			"repo": "tinyglobby",
+			"purl": "pkg:npm/tinyglobby@%5E0.2.14"
+		},
+		{
+			"host": "npm",
+			"repo": "tsdown",
+			"purl": "pkg:npm/tsdown@%5E0.14.1"
+		},
+		{
+			"host": "npm",
+			"repo": "type-fest",
+			"purl": "pkg:npm/type-fest@%5E4.41.0"
+		},
+		{
+			"host": "npm",
+			"repo": "typedoc",
+			"purl": "pkg:npm/typedoc@%5E0.28.10"
+		},
+		{
+			"host": "npm",
+			"repo": "typedoc-plugin-markdown",
+			"purl": "pkg:npm/typedoc-plugin-markdown@%5E4.8.1"
+		},
+		{
+			"host": "npm",
+			"repo": "typedoc-vitepress-theme",
+			"purl": "pkg:npm/typedoc-vitepress-theme@%5E1.1.2"
+		},
+		{
+			"host": "npm",
+			"repo": "unplugin-macros",
+			"purl": "pkg:npm/unplugin-macros@%5E0.18.0"
+		},
+		{
+			"host": "npm",
+			"repo": "unplugin-unused",
+			"purl": "pkg:npm/unplugin-unused@%5E0.5.2"
+		},
+		{
+			"host": "npm",
+			"repo": "vitepress",
+			"purl": "pkg:npm/vitepress@%5E1.6.4"
+		},
+		{
+			"host": "npm",
+			"repo": "vitepress-plugin-group-icons",
+			"purl": "pkg:npm/vitepress-plugin-group-icons@%5E1.6.3"
+		},
+		{
+			"host": "npm",
+			"repo": "vitepress-plugin-llms",
+			"purl": "pkg:npm/vitepress-plugin-llms@%5E1.7.3"
+		},
+		{
+			"host": "npm",
+			"repo": "vitepress-plugin-mermaid",
+			"purl": "pkg:npm/vitepress-plugin-mermaid@%5E2.0.17"
+		},
+		{
+			"host": "npm",
+			"repo": "vitest",
+			"purl": "pkg:npm/vitest@%5E3.2.4"
+		},
+		{
+			"host": "npm",
+			"repo": "wrangler",
+			"purl": "pkg:npm/wrangler@%5E4.32.0"
+		},
+		{
+			"host": "npm",
+			"repo": "xdg-basedir",
+			"purl": "pkg:npm/xdg-basedir@%5E5.1.0"
+		},
+		{
+			"host": "npm",
+			"repo": "zod",
+			"purl": "pkg:npm/zod@%5E3.25.67"
+		}
+	]
+}

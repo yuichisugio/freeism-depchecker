@@ -1,4 +1,0 @@
-1. GitHub API空、GitHub CLIを使用して、指定したライブラリのGitHub Export SBOMを取得する
-gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/ryoppippi/ccusage/dependency-graph/sbom
-
-gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/ryoppippi/ccusage/dependency-graph/sbom  | jq '.' > ./github-sbom/archive/dependency_1.json
